@@ -1,4 +1,22 @@
+# phpstorm keeps settings in idea
 .idea
+
+# templates are project specific
+chmp/templates/*
+!chmp/templates/example.html
+
+# assets and content are created by the editor
+chmp/assets/*
+chmp/content/*
+
+# skip minimized js and css files
+chmp/js/production.min.js
+chmp/js/editor.min.js
+chmp/editordesign/chmp.min.css
+
+
+# just some folders I use for testing
 css*
 test*
 pic*
+
