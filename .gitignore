@@ -6,7 +6,9 @@ chmp/templates/*
 !chmp/templates/example.html
 
 # assets and content are created by the editor
-chmp/assets/*
+chmp/assets/files/*
+chmp/assets/images/*
+chmp/assets/original_images/*
 chmp/content/*
 
 # skip minimized js and css files
@@ -19,4 +21,5 @@ chmp/editordesign/chmp.min.css
 css*
 test*
 pic*
+js*
 
