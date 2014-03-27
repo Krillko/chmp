@@ -1708,4 +1708,5 @@ class simple_html_dom {
 	}
 }
 
+
 ?>
