@@ -18,5 +18,46 @@ Software: Software used for the development
 /* - - - - - - - - - - - - - Built with chmp cms - - - - - - - - - - - - - - - -
 	Please keep this part of this file
 */
-Lead developer: Kristoffer Ekendahl.
+Lead developer, php and js: Kristoffer Ekendahl.
+Graphic design: Alexander Fandén
+User interface: KE & AF, based on Oktobermedia CMS
+
 This project is supported by Diakrit, www.diakrit.com
+
+Thanks to Anders "Jackie" Karlsson who said, "You can't build an admin interface that even a chimpanze could use",
+well, I can at least try.
+
+
+/* - - - - - - - - - - - - - Used open source etc*/
+
+html5doctor.com Reset Stylesheet v1.6.1
+Author: Richard Clark - http://richclarkdesign.com
+Twitter: @rich_clark
+
+
+Drag and drop upload based on this article:
+http://hayageek.com/drag-and-drop-file-upload-jquery/
+by Ravishanker Kusuma
+
+
+jCrop
+http://deepliquid.com/content/Jcrop.html
+Author: Kelly Hallman <khallman@gmail.com>
+
+
+Powertip
+Copyright (c) 2013 Steven Benner (http://stevenbenner.com/)
+http://stevenbenner.github.io/jquery-powertip/
+
+Isotope
+http://isotope.metafizzy.co/ by David DeSandro / Metafizzy
+Isotope is used under it's open source licence, this means it's free to use in chmp:s editor, but
+you are not allowed to copy it to somewhere else and use in a commercial project, that requires a licence.
+
+
+Css for checkbox based on
+http://www.csscheckbox.com
+
+Featherlight - ultra slim jQuery lightbox
+http://noelboss.github.io/featherlight/
+Copyright 2014, Noël Raoul Bossart (http://www.noelboss.com)

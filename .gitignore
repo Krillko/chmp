@@ -8,7 +8,9 @@ chmp/templates/*
 # assets and content are created by the editor
 chmp/assets/files/*
 chmp/assets/images/*
-chmp/assets/original_images/*
+chmp/assets/images_originals/*
+chmp/assets/images_temp/*
+chmp/assets/images_upload/*
 chmp/content/*
 
 # skip minimized js and css files

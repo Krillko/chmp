@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link rel="stylesheet" type="text/css" href="chmp.css">
+	<link rel="stylesheet" type="text/css" href="chmp_in_iframe.css">
+
+	<style type="text/css">
+
+	</style>
+
+	<title></title>
+</head>
+
+<body>
+
+
+<!--
+
+
+<div class="chmp chmp-arrownav">
+	<div class="chmp chmp-arrownav-item chmp-arrownav-selected">
+		<p>Select Image</p>
+	</div>
+	<div class="chmp chmp-arrownav-arrow"><div class="chmp chmp-arrow-fromselected"></div></div>
+	<div class="chmp chmp-arrownav-item">
+		<p>Crop Image</p>
+	</div>
+	<div class="chmp chmp-arrownav-arrow chmp-arrownav-noselect"></div>
+	<div class="chmp chmp-arrownav-item">
+
+		<p>Preview</p>
+	</div>
+	<div class="chmp chmp-arrownav-close"><div class="chmp chmp-icon-center chmp-icon-close"></div></div>
+</div>
+
+
+<div class="chmp chmp-arrownav">
+
+	<div class="chmp chmp-arrownav-item">
+		<p><a href="javascript:;" class="chmp">Select Image</a></p>
+	</div>
+
+	<div class="chmp chmp-arrownav-arrow chmp-arrownav-arrow-toselected"><div class="chmp chmp-arrow-toselected"></div></div>
+
+	<div class="chmp chmp-arrownav-item chmp-arrownav-selected">
+		<p>Crop Image</p>
+	</div>
+
+	<div class="chmp chmp-arrownav-arrow"><div class="chmp chmp-arrow-fromselected"></div></div>
+
+	<div class="chmp chmp-arrownav-item">
+		<p>Preview</p>
+	</div>
+
+
+	<div class="chmp chmp-arrownav-close"><div class="chmp chmp-icon-center chmp-icon-close"></div></div>
+</div>
+
+-->
+
+
+<div class="chmp chmp-arrownav">
+
+	<div class="chmp chmp-arrownav-item">
+		<p><a href="javascript:;" class="chmp">Select Image</a></p>
+	</div>
+
+	<div class="chmp chmp-arrownav-arrow chmp-arrownav-noselect"></div>
+
+	<div class="chmp chmp-arrownav-item">
+		<p>Crop Image</p>
+	</div>
+
+	<div class="chmp chmp-arrownav-arrow chmp-arrownav-arrow-toselected">
+		<div class="chmp chmp-arrow-toselected"></div>
+	</div>
+
+	<div class="chmp chmp-arrownav-item  chmp-arrownav-selected">
+		<p>Preview</p>
+	</div>
+
+
+	<div class="chmp chmp-arrownav-close">
+		<div class="chmp chmp-icon-center chmp-icon-close"></div>
+	</div>
+</div>
+
+
+<div class="chmp chmp-iframe">
+	<div class="chmp chmp-iframe-content chmp-padding">
+
+		<div class="chmp chmp-imgedit chmp-imgedit-current">
+			<h2>Current image</h2>
+
+			<div class="chmp"><img src="../assets/images/33.jpg" alt="33" width="569" height="262"
+			                       class="chmp chmp-imgedit-preview"></div>
+		</div>
+
+		<div class="chmp chmp-imgedit chmp-imgedit-upload">
+			<h2>Upload image</h2>
+
+			<div class="chmp chmp-imgedit-upload">
+				<div class="chmp chmp-imgedit-uploadinfo">Upload your image in any size/format<br><br>
+					<b>or</b> exact size,<br>
+					jpg, png or gif<br>
+					Width: 200 px<br>
+					Height: any
+				</div>
+				<div class="chmp chmp-imgedit-uploader">
+
+					<div class="chmp chmp-imgedit-droptext"><p>Drag & drop your image here</p></div>
+
+					<div class="chmp chmp-imgedit-uploader2">
+						<form method="post" enctype="multipart/form-data" name="form1" id="form1">
+							<label for="fileField">or:</label>
+							<input type="file" name="fileField" id="fileField">
+						</form>
+
+					</div>
+
+
+				</div>
+			</div>
+
+		</div>
+
+
+		<!--<div class="chmp chmp-imgedit chmp-imgedit-archive">
+			<h2>All images</h2>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/test_thumb.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/18_thumb.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/19.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/20.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/21.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/22.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/23.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/24.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/25.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/26.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/27.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/28.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/29.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/30.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+			<div class="chmp chmp-imgedit-oldimg">
+				<img src="../assets/images_originals/31.jpg"  class="chmp chmp-imgedit-preview">
+				<p class="chmp chmp-imgedit-filename">Filename</p>
+			</div>
+
+
+
+
+
+		</div>-->
+
+
+		<div class="chmp chmp-imgedit-btns">
+			<div class="chmp chmp-cell">
+
+				<input id="demo_box_1" class="chmp-checkbox" type="checkbox"/>
+				<label for="demo_box_1" name="demo_lbl_1" class="chmp-label">Option #1</label>
+
+			</div>
+			<div class="chmp chmp-cell">
+
+				<div class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit chmp-right"><p><u>C</u>rop
+				</p></div>
+
+			</div>
+
+		</div>
+
+
+	</div>
+</div>
+
+
+</body>
+</html>

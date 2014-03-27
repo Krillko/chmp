@@ -140,7 +140,7 @@ class Show_content {
 
 	public function get_title() {
 		// TODO: make a seo friendly path here
-		return ( $this->content->content[ 'info' ][ 'title' ] );
+		return ( $this->content->get('title') );
 	}
 
 

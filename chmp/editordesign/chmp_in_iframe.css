@@ -1,0 +1,448 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Reset part */
+
+/* This reset is intended for IE9+ */
+
+/*
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com
+Twitter: @rich_clark
+*/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+body {
+	line-height: 1;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+nav ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+a {
+	margin: 0;
+	padding: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+/* change colours to suit your needs */
+ins {
+	background-color: #ff9;
+	color: #000;
+	text-decoration: none;
+}
+
+/* change colours to suit your needs */
+mark {
+	background-color: #ff9;
+	color: #000;
+	font-style: italic;
+	font-weight: bold;
+}
+
+del {
+	text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+	border-bottom: 1px dotted;
+	cursor: help;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* change border colour to suit your needs */
+hr {
+	display: block;
+	height: 1px;
+	border: 0;
+	border-top: 1px solid #ccc;
+	margin: 1em 0;
+	padding: 0;
+}
+
+input, select {
+	vertical-align: middle;
+}
+
+/* end html doctor part */
+
+/* Headlines */
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+}
+
+/* Box-sizing
+This makes the box same as width, even if you have padding.
+to all elements */
+* {
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+/* sup / sub
+fixes sup without messing up lineheight
+
+*/
+sub, sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+sup {
+	top: -0.5em;
+}
+
+sub {
+	bottom: -0.25em;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - End Reset part */
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Design part */
+
+/* Arrow navigation for iframe */
+.chmp-arrownav {
+	display: table;
+	width: 100%;
+	background: #dfdfdf;
+	height: 32px;
+}
+
+.chmp-arrownav-item {
+	display: table-cell;
+	text-align: center;
+	width: 33%;
+	font-size: 14px;
+	color: #000;
+	height: 32px;
+}
+
+.chmp-arrownav-item p {
+	margin: 10px 0 0 0;
+	padding: 0;
+}
+
+.chmp-arrownav-item p a {
+	font-size: 14px;
+}
+
+.chmp-arrownav-close {
+	display: table-cell;
+	min-width: 32px;
+	width: 10px;
+	background: #4f4f4f;
+	cursor: pointer;
+}
+
+.chmp-arrownav-arrow {
+	min-width: 12px;
+	width: 12px;
+	display: table-cell;
+}
+
+.chmp-arrow-fromselected {
+	width: 0;
+	height: 0;
+	border-top: 16px solid transparent;
+	border-bottom: 16px solid transparent;
+	border-left: 10px solid #f2f2f2;
+	position: absolute;
+}
+
+.chmp-arrow-toselected {
+	width: 0;
+	height: 0;
+	border-top: 16px solid transparent;
+	border-bottom: 16px solid transparent;
+	border-left: 10px solid #dfdfdf;
+	position: absolute;
+}
+
+.chmp-arrownav-arrow-toselected {
+	background: #f2f2f2;
+}
+
+.chmp-arrownav-noselect {
+	width: 12px;
+	height: 32px;
+	background: url(chmpsprites.png) no-repeat 0 0px;
+	background-size: 32px 1000px;
+}
+
+.chmp-arrownav-selected {
+	background: #f2f2f2;
+}
+
+.chmp-arrownav-click {
+	cursor: pointer;
+}
+
+/* icons */
+.chmp-icon-center {
+	margin: 0 auto;
+}
+
+.chmp-icon-close {
+	width: 11px;
+	height: 11px;
+	background: url(chmpsprites.png) no-repeat 0 -32px;
+	background-size: 32px 1000px;
+}
+
+/*
+	Iframe
+*/
+
+.chmp-iframe {
+	background: #fff;
+	height: 100%;
+	overflow: auto;
+}
+
+.chmp-iframe-content {
+}
+
+.chmp-padding {
+	padding: 20px;
+}
+
+.chmp-padding-small {
+	padding: 10px;
+}
+
+/*
+	Imageeditor
+
+*/
+.chmp-imgedit-preview {
+	max-width: 180px;
+	max-height: 120px;
+}
+
+.chmp-imgedit-current, .chmp-imgedit-upload {
+	float: left;
+}
+
+.chmp-imgedit-current {
+	margin: 0 20px 0 0;
+	cursor: pointer;
+}
+
+.chmp-imgedit h2 {
+	margin: 0;
+	padding: 0 0 5px 0;
+	font-weight: normal;
+	font-size: 18px;
+	line-height: 18px;
+	color: #000;
+	text-decoration: none !important;
+	margin: 0 0 5px 0;
+}
+
+.chmp-imgedit-upload {
+	display: table;
+}
+
+.chmp-imgedit-uploadinfo {
+	display: table-cell;
+	background: #f5f5f5;
+	padding: 10px;
+	border: 1px solid #d1d1d1;
+	border-radius: 3px 0px 0px 3px;
+	font-size: 11px;
+	line-height: 18px;
+	max-width: 150px;
+	vertical-align: top;
+}
+
+.chmp-imgedit-uploader {
+	display: table-cell;
+	padding: 10px;
+	border-radius: 0px 3px 3px 0;
+	border-top: 1px dashed #d1d1d1;
+	border-right: 1px dashed #d1d1d1;
+	border-bottom: 1px dashed #d1d1d1;
+}
+
+.chmp-imgedit-droptext {
+	background: url(chmpsprites.png) no-repeat 0 -64px;
+	background-size: 32px 1000px;
+	min-height: 32px;
+}
+
+.chmp-imgedit-droptext p {
+	font-size: 16px;
+	color: #787878;
+	padding: 8px 0 0 36px;
+}
+
+.chmp-imgedit-uploader2 label {
+	font-weight: bold;
+}
+
+.chmp-imgedit-archive {
+	clear: both;
+}
+
+.chmp-imgedit-oldimg {
+	width: 180px;
+	height: 140px;
+	float: left;
+	cursor: pointer;
+	text-align: center;
+	margin: 0 10px 10px 0;
+}
+
+.chmp-imgedit-btns {
+	clear: both;
+	display: table;
+	width: 100%;
+	padding: 10px 0 0 0;
+}
+
+.chmp-cell {
+	display: table-cell;
+}
+
+.chmp-right {
+	display: table-cell;
+	text-align: right;
+}
+
+.chmp-checkbox {
+	width: 16px;
+	height: 17px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background: #eaeaea;
+	-webkit-box-shadow: inset 0 1px rgba(0, 0, 0, .27);
+	-moz-box-shadow: inset 0 1px rgba(0, 0, 0, .27);
+	box-shadow: inset 0 1px rgba(0, 0, 0, .27);
+}
+
+input[type=checkbox].chmp-checkbox {
+	position: absolute;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	width: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+}
+
+input[type=checkbox].chmp-checkbox + label.chmp-label {
+	padding-left: 20px;
+	height: 16px;
+	display: inline-block;
+	line-height: 18px;
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	font-size: 12px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+input[type=checkbox].chmp-checkbox:checked + label.chmp-label {
+	background-position: 0 -16px;
+}
+
+.chmp-label { background-image: url(checkbox.png); }
+
+.chmp-right {
+	float: right;
+}
+
+/* drag and drop */
+.chmp-dropActive {
+	background: green;
+}
+
+.chmp-progressBar {
+	width: 200px;
+	height: 12px;
+	background: #d1d1d1;
+	border: 1px solid #d1d1d1;
+	border-radius: 3px;
+	overflow: hidden;
+	display: inline-block;
+	margin: 10px 0 0 0;
+	vertical-align: top;
+}
+
+.chmp-progressBar div {
+	height: 100%;
+	color: #000;
+	text-align: right;
+	line-height: 12px; /* same as #progressBar height if we want text middle aligned */
+	font-size: 8px;
+	width: 0;
+	background-color: #42ac43;
+	border-radius: 3px;
+}
+
+/* crop */
+.chmp-cropimg-holder {
+	width: 1004px;
+	height: 542px;
+	background: #f2f2f2;
+	text-align: center;
+	overflow: hidden;
+}
+
+.chmp-cropimg {
+	max-width: 1004px;
+	max-height: 542px;
+	margin: 0 auto;
+}
+
+/* scale */
+.chmp-imgedit-scale {
+	background: url(imgeditor_grid.png);
+	width: 100%;
+	min-height: 540px;
+	border: 1px solid #b3b2b2;
+}

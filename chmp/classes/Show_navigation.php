@@ -3,19 +3,26 @@
 
 class Show_navigation {
 
-	public $currentpage;
+	public $nav_in, $currentpage, $templatefile, $lang, $structure;
 
-	function __construct($filepath = '') {
-		if ( $filepath == '' ) {
+	function __construct($content) {
 
-			// TODO: diffrent $filepath if edit is on or off
-			// TODO: add language support
-			$filepath = 'chmp/content/structure_1.json';
+		$this->templatefile = $content->get('templatefile');
+		$this->lang         = $content->get('lang');
+		$this->structure    = $content->get('structure');
+
+		$stucturefile = 'chmp/content/structure_' . $this->structure . '.json';
+
+		$structure_raw = file_get_contents($stucturefile);
+		$this->nav_in  = @json_decode($structure_raw, TRUE);
+
+		if ( $data === null
+			&& json_last_error() !== JSON_ERROR_NONE
+		) {
+			die( "<h2>Error</h2><p>Unable to read chmp/templates/" . $stucturefile . "</p>
+			<code>" . Tools::json_error(json_last_error()) . "</code>" );
 		}
 
-		$structure_raw = file_get_contents($filepath);
-
-		$this->nav_in = json_decode($structure_raw, TRUE);
 
 	}
 
@@ -30,7 +37,7 @@ class Show_navigation {
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - make a pretty url link
 
 	public function view_prettyUrl($pageId) {
-
+		// TODO: this is not even started
 		return ( $pageId );
 
 	}
@@ -42,7 +49,10 @@ class Show_navigation {
 	// returns <ul> with navigation
 
 	/** Returns formatted navigation
-	 * TODO: include start and end
+	 * TODO: include start level
+	 * TODO: class on a
+	 * TODO: id on a
+	 * TODO: option to wrap text in a with span etc
 	 *
 	 * @param string $type 'ul' returns <ul>, 'sitemapxml'
 	 * @param array $attr attibutes from <navigation> tag
