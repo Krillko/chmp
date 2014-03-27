@@ -20,8 +20,8 @@ chmp/editordesign/chmp.min.css
 
 
 # just some folders I use for testing
-css*
-test*
-pic*
-js*
+css
+test
+pic
+js
 
