@@ -5,6 +5,7 @@
 // testvalues, replace with real
 $page_id       = 1;
 $test_language = 'sv';
+$test_edit = TRUE;
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  Require classes
 // - - - - - - - - - - - - - - - - - - - - for production
@@ -33,7 +34,7 @@ $error_log = new Error_log();
 
 // Builds a page and shows it
 $page = new Show_page();
-$page->load_page($page_id);
+$page->load_page($page_id, $test_edit);
 
 echo $page->show_page();
 

@@ -1,18 +1,5 @@
 <?php
 
-// testvalues
-$image_uid = 33;
-//$image_original = 1;
-
-// TODO: replace with real value
-$chmp_attr = array(
-	'data-chmp-width'     => 500,
-	'data-chmp-height'    => 300,
-	'data-chmp-maxwidth'  => 700,
-	'data-chmp-minwidth'  => 300,
-	'data-chmp-keepwidth' => TRUE
-);
-
 require_once( 'classes/Config.php' );
 Config::init('../');
 
@@ -37,18 +24,28 @@ Image_library::add_uploaded();
 $manifest = new Image_manifest( $images_originals_folder . 'manifest.json' );
 
 if ( isset( $_POST[ 'from_page' ] ) ) {
-	$chmp_attr      = json_decode(base64_decode($_POST[ 'chmp_attr' ]), TRUE);
-	$chmp_attr_json = base64_decode($_POST[ 'chmp_attr' ]);
-	$image_uid      = intval($_POST[ 'image_uid' ]);
+	$chmp_attr       = json_decode(base64_decode($_POST[ 'chmp_attr' ]), TRUE);
+	$chmp_attr_json  = base64_decode($_POST[ 'chmp_attr' ]);
+	$image_tuid      = $_POST[ 'image_tuid' ];
+	$original_img_id = $_POST[ 'original_img_id' ];
+} else { // imageeditor just opened
+
+	$chmp_attr = array();
+	foreach ( $_GET as $getrowK => $getrowV ) {
+		if ( substr($getrowK, 0, 10) == 'data-chmp-' ) {
+			$chmp_attr[ $getrowK ] = $getrowV;
+		}
+	}
+	$image_tuid      = $_GET[ 'data-chmp-tuid' ];
+	$original_img_id = $_GET[ 'data-chmp-orgimgid' ];
+
 }
 
 if ( $_POST[ 'from_page' ] == 'select' or $_POST[ 'from_page' ] == 'scale' ) {
-	$view            = 'crop';
-	$original_img_id = intval($_POST[ 'original_img_id' ]);
-	$geometry        = new Image_geometry( $original_img_id, $manifest, 0, 0, $chmp_attr );
+	$view     = 'crop';
+	$geometry = new Image_geometry( $original_img_id, $manifest, 0, 0, $chmp_attr );
 } elseif ( $_POST[ 'from_page' ] == 'crop' ) {
-	$view            = 'scale';
-	$original_img_id = intval($_POST[ 'original_img_id' ]);
+	$view = 'scale';
 
 	$existing_files = array();
 	// making a new img file
@@ -82,7 +79,12 @@ if ( $_POST[ 'from_page' ] == 'select' or $_POST[ 'from_page' ] == 'scale' ) {
 
 	$image->set_jpg();
 
+	$output_size = $image->get_size();
+
 	$image->save_image($images_output_folder . $new_img_id . '.jpg');
+
+	$new_img_id_out = $new_img_id . '.jpg';
+
 
 } else {
 	$view = 'select';
@@ -199,10 +201,10 @@ if ( $view == 'select' ) {
 ';
 
 	// current imag
-	if ( $image_original > 0 ) {
+	if ( $chmp_attr[ 'data-chmp-orgimgid' ] > 0 and $manifest->image_exists($chmp_attr[ 'data-chmp-orgimgid' ]) ) {
 		$out .= '<div class="chmp chmp-imgedit chmp-imgedit-current">
 				<h2>Current image</h2>
-				<div class="chmp"><img src="assets/images_originals/' . $manifest->get_image($image_original, 'thumb') . '" class="chmp chmp-imgedit-preview"></div>
+				<div class="chmp"><img src="assets/images_originals/' . $manifest->get_image($chmp_attr[ 'data-chmp-orgimgid' ], 'thumb') . '" class="chmp chmp-imgedit-preview"></div>
 			</div>';
 	}
 
@@ -313,22 +315,26 @@ $out .= '
 			<input type="hidden" name="from_page" id="from_page" value="' . $view . '">
 			<input type="hidden" name="chmp_attr" value="' . base64_encode(json_encode($chmp_attr)) . '">
 			<input type="hidden" name="original_img_id" id="original_img_id" value="' . ( $original_img_id > 0 ? $original_img_id : 0 ) . '">
-			<input type="hidden" name="image_uid" value="' . $image_uid . '">';
+			<input type="hidden" name="image_tuid" id="image_tuid" value="' . $image_tuid . '">';
+
+if ( $view == 'scale' ) {
+	$out .= '<input type="hidden" id="new_img_id" value="' . $new_img_id_out . '">
+			<input type="hidden" name="output_w" id="output_w" value="' . $output_size[ 'width' ] . '">
+			<input type="hidden" name="output_h" id="output_h" value="' . $output_size[ 'height' ] . '">
+			';
+
+
+}
 
 if ( $view == 'crop' or $view == 'scale' ) {
-
 	$out .= '
-    <input type="hidden" size="4" id="x1" name="crop-x1" value="' . $_POST[ 'crop-x1' ] . '"></label>
-    <input type="hidden" size="4" id="y1" name="crop-y1" value="' . $_POST[ 'crop-y1' ] . '"></label>
-    <input type="hidden" size="4" id="x2" name="crop-x2" value="' . $_POST[ 'crop-x2' ] . '"></label>
-    <input type="hidden" size="4" id="y2" name="crop-y2" value="' . $_POST[ 'crop-y2' ] . '"></label>
-    <input type="hidden" size="4" id="w" name="crop-w" value="' . $_POST[ 'crop-w' ] . '"></label>
-    <input type="hidden" size="4" id="h" name="crop-h" value="' . $_POST[ 'crop-h' ] . '"></label>
-
-
-
-   ';
-
+    <input type="hidden"  id="x1" name="crop-x1" value="' . $_POST[ 'crop-x1' ] . '"></label>
+    <input type="hidden"  id="y1" name="crop-y1" value="' . $_POST[ 'crop-y1' ] . '"></label>
+    <input type="hidden"  id="x2" name="crop-x2" value="' . $_POST[ 'crop-x2' ] . '"></label>
+    <input type="hidden"  id="y2" name="crop-y2" value="' . $_POST[ 'crop-y2' ] . '"></label>
+    <input type="hidden"  id="w" name="crop-w" value="' . $_POST[ 'crop-w' ] . '"></label>
+    <input type="hidden"  id="h" name="crop-h" value="' . $_POST[ 'crop-h' ] . '"></label>
+	';
 }
 
 $out .= '

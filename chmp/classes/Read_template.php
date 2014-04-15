@@ -54,7 +54,7 @@ class Read_tempate {
 						foreach ( $module_row->find('*[data-chmp-name]') as $editable_row ) {
 
 							$thisEditableName = $editable_row->getAttribute('data-chmp-name');
-							$thisEditableTag  = Tools::tag_kind($editable_row->tag);
+							$thisEditableTag = Config::tag_kind($editable_row->tag);
 
 							if ( is_array($this->template[ $content_uid ][ 'modules' ][ $moduleUid ][ $thisEditableTag ][ $thisEditableName ]) ) {
 								//$error_log->add_warning('Editable element "'.$thisEditableTag.'" with duplicate name "'.$thisEditableName.'" in content uid '.$content_uid.' module '.$moduleUid.'. Attributes only taken from first occurance');
@@ -108,4 +108,4 @@ class Read_tempate {
 	}
 
 
-} 
+}

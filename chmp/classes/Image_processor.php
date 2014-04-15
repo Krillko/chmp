@@ -42,6 +42,21 @@ class Image_processor {
 		$this->image->setImageCompressionQuality($compression);
 	}
 
+
+	public function get_size() {
+
+		$geo = $this->image->getImageGeometry();
+
+		return ( $geo );
+
+
+	}
+
+	/**
+	 * Saves the image to disc
+	 * @param $imagepath
+	 * @param bool $keep , false = the image is destroyed
+	 */
 	public function save_image($imagepath, $keep = FALSE) {
 		$this->image->writeImage($imagepath);
 

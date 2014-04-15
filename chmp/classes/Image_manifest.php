@@ -65,9 +65,9 @@ class Image_manifest {
 
 	public function get_image($id, $type = 'filename') {
 
-		if ( !array_key_exists($id, $this->json[ 'files' ]) ) {
+		if ( !$this->image_exists($id) ) {
 			// TODO: error handling for this?
-			return null;
+			return NULL;
 
 		}
 
@@ -80,6 +80,17 @@ class Image_manifest {
 		}
 
 
+	}
+
+	// check if an image exist, first in manifest, then real file
+	public function image_exists($id) {
+		if ( array_key_exists($id, $this->json[ 'files' ]) ) {
+			if ( is_file('../' . Config::get('assets_folder') . 'images_originals/' . $this->json[ 'files' ][ $id ][ 'filename' ]) ) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
 	}
 
 

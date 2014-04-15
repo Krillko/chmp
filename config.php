@@ -1,18 +1,21 @@
 <?php
 
 /*
-	salt for blowfish encryption
-	you should change this to something eller
+	- - - - - - - - - - - - - - salt for blowfish encryption
+	you should change this to something else one time, if you change it again later, all login accounts will stop working
+	you will never be asked to type this, so you don't have to remember it, so it's best if you use a completly random string
+
 */
 $chmp_config[ 'salt' ] = '$2y$07$' // leave this
 	. 'chmpDefaultSaltPlseChange' // change this, 25 letters ./0-9A-Za-z
 	. '$'; // leave this
 
-// relative path from root to assets
+// - - - - - - - - - - - - - - relative path from root to assets
 $chmp_config[ 'assets_folder' ]  = 'chmp/assets/';
 $chmp_config[ 'content_folder' ] = 'chmp/content/';
 
-/* login dialog. Use this to customize login, or if your language is missing
+/* - - - - - - - - - - - - - -login dialog.
+Use this to customize login, or if your language is missing
 Add as many as you like
 
 $chmp_config['login'][  langage code in, example 'en'  ] => array(
@@ -27,6 +30,12 @@ $chmp_config['login'][  langage code in, example 'en'  ] => array(
 
 */
 
-// jquery, true = load from googleapis , false = load internaly
+// - - - - - - - - - - - - - -jquery
+// true = load from googleapis , false = load internaly
 $chmp_config[ 'jquery_external' ] = TRUE;
 $chmp_config[ 'jquery_version' ]  = '2.1.0';
+
+// - - - - - - - - - - - - - - editor navigation
+// false (default) adds navigation as a block on top of the page
+// true: navigation floats over content, this covers a part of the content, but may work better if you have a lot of design with absolute positioning
+$chmp_config[ 'float_navigation' ] = FALSE;

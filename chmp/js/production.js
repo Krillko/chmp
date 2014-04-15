@@ -1,7 +1,7 @@
 $(document).ready(function () {
-	console.log("ready");
-	console.log(chmp.logintexts);
-	console.log(chmp.logintexts.login);
+	//console.log("ready");
+	//console.log(chmp.logintexts);
+	//console.log(chmp.logintexts.login);
 
 	(function () {
 		var logindesign;

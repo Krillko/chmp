@@ -5,20 +5,17 @@
  */
 class Show_page {
 
-	public $html_output;
+	public $html_output, $edit;
 
-	function __construct() {
 
-	}
-
-	function show_page() {
+	public function show_page() {
 
 		return $this->html_output;
 
 	}
 
 
-	function load_page($page_id) {
+	public function load_page($page_id, $edit = FALSE) {
 
 		/* Get content
 			Reads content from chmp/content/[pagenumber].json and makes an array
@@ -30,8 +27,6 @@ class Show_page {
 		*/
 		$template_raw = new Read_template_file( $content->get('templatefile') );
 
-		die( $template_raw->template );
-
 		$html = new simple_html_dom();
 		$html->load($template_raw->template);
 
@@ -42,6 +37,7 @@ class Show_page {
 		$nav->set_currentpage($page_id);
 
 		$show_content = new Show_content( $template, $content );
+		$show_content->set_edit($edit);
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - starts actual output
 
@@ -57,7 +53,7 @@ class Show_page {
 		// - - - - - - - - - - - - - - - - - - - - Changes every text/img outside contentareas
 		foreach ( $html->find('*[data-chmp-name]') as $outsideContent ) {
 
-			if ( Tools::tag_kind($outsideContent->tag) == 'text' ) {
+			if ( Config::tag_kind($outsideContent->tag) == 'text' ) {
 				$outsideContent->innertext = $show_content->show_outside_content($outsideContent, 'text');
 			} else if ( $outsideContent->tag == 'img' ) {
 				$outsideContent->outertext = $show_content->show_outside_content($outsideContent, 'img');
@@ -68,7 +64,23 @@ class Show_page {
 		// - - - - - - - - - - - - - - - - - - - - Builds the contentarea
 
 		foreach ( $html->find('content') as $contentarea ) {
-			$contentarea->outertext = $show_content->show_contentarea($contentarea);
+
+			// converts chmp contentarea to a div
+			if ( $edit ) {
+				$attr = '';
+				// keeps attr
+				foreach ( $contentarea->getAllAttributes() as $attrK => $attrV ) {
+					$attr .= ' ' . $attrK . '="' . $attrV . '"';
+				}
+
+				$contentarea->outertext = '<div class="chmp-edit-contentarea" ' . $attr . '>' . $show_content->show_contentarea($contentarea) . '</div>';
+
+			} else {
+				$contentarea->outertext = $show_content->show_contentarea($contentarea);
+
+			}
+
+
 		}
 
 		// - - - - - - - - - - - - - - - - - - - - Set page title
@@ -78,18 +90,34 @@ class Show_page {
 			the method makeup() is not documented in simple_html_dom
 		*/
 
+		$add_scripts .= '<link rel="stylesheet" type="text/css" href="chmp/editordesign/chmp.css"/>';
+
 		$add_scripts_settings = '<script type="text/javascript">
 			if ( typeof console === "undefined" || typeof console.log === "undefined" ) {console = {};console.log = function(){};console.warn=function(){};console.error = function () {}}
-			var chmp = chmp || [];';
+			var chmp = chmp || [];
+				chmp.chmp_cnf_texts = ' . json_encode(Config::$chmp_cnf_texts) . ';
+
+
+			';
 
 		// check if we have a login tag
 		$login = $html->find('login');
 		if ( count($login) > 0 ) {
 			$add_scripts .= '<script type="text/javascript" src="chmp/js/jquery.powertip.min.js"></script>';
 			$add_scripts .= '<link rel="stylesheet" type="text/css" href="chmp/editordesign/jquery.powertip.css"/>';
-			$add_scripts_settings .= "chmp.logintexts = " . json_encode(Tools::get_logintext('sv', ''), JSON_FORCE_OBJECT) . ";";
+			$add_scripts_settings .= "chmp.logintexts = " . json_encode(Config::get_logintext('sv', ''), JSON_FORCE_OBJECT) . ";";
 
-			$html->find('login', 0)->outertext = '<a href="javascript:;" id="chmp-login-btn">' . Tools::get_logintext('sv', 'login') . '</a>';
+			$html->find('login', 0)->outertext = '<a href="javascript:;" id="chmp-login-btn">' . Config::get_logintext('sv', 'login') . '</a>';
+
+		}
+
+		// add scripts if we are in editor mode
+
+		if ( $edit ) {
+
+			$add_scripts .= '<script type="text/javascript" src="chmp/js/editor.js"></script>';
+			$add_scripts .= '<script type="text/javascript" src="chmp/js/featherlight.min.js"></script>';
+
 
 		}
 
@@ -117,5 +145,11 @@ class Show_page {
 
 
 	}
+
+	private function editorbuttons() {
+
+
+	}
+
 
 }

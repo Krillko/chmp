@@ -1,56 +1,397 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="chmp.css">
+
+<style type="text/css">
+
+/* just some testing values so we can see that chmp will be working inside another style*/
+
+body {
+	background: pink;
+	margin: 0;
+	padding: 0;
+}
+
+div, a, span, td {
+	font-family: fantasy;
+	font-size: 24px;
+	color: blue;
+	color: #eb15c8;
+}
+
+.test2 {
+	height: 20px;
+	background: blue;
+}
+
+.chmp-navigation-holder {
+	height: 36px;
+	width: 100%;
+	position: relative;
+}
+
+/* .chmp-navigation is omited if the menu is floating */
+.chmp-navigation {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 36px;
+	width: 100%;
+	-webkit-transition: 0.3s ease-in-out;
+	-moz-transition: 0.3s ease-in-out;
+	-o-transition: 0.3s ease-in-out;
+	transition: 0.3s ease-in-out;
+	background-color: #4f4f4f;
+	-webkit-box-shadow: 0 1px 4px #000;
+	-moz-box-shadow: 0 1px 4px #000;
+	box-shadow: 0 1px 4px #000;
+}
+
+.chmp-nav-edit {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: default;
+	padding: 0 10px 0 10px;
+}
+
+.chmp-nav-part {
+	float: left;
+	color: #fff;
+	font-size: 10px;
+	font-weight: bold;
+	margin: 0 10px 0 0;
+}
+
+.chmp-right {
+	float: right;
+}
+
+.chmp-nav-part-text p {
+	margin: 12px 0 0 0;
+}
+
+.chmp-nav-part-btn {
+	padding: 6px 0 0 0;
+}
+
+/* edit on off */
+
+.chmp-nav-onoff-holder {
+	margin: 5px 0 0 0;
+}
+
+.chmp-nav-onoff {
+	display: inline-block;
+	height: 24px;
+	border-radius: 12px;
+	padding: 3px;
+}
+
+.chmp-nav-onoff-on {
+	background: #46aa37;
+}
+
+.chmp-nav-onoff-off {
+	background: #c93f2d;
+}
+
+.chmp-nav-onoff-inner {
+	background: #bababa;
+	height: 18px;
+	border-radius: 9px;
+}
+
+.chmp-nav-onoff-btn {
+	display: inline-block;
+	height: 18px;
+}
+
+.chmp-nav-onoff-on .chmp-nav-btn-on {
+	background: #fff;
+	border-radius: 9px;
+	padding: 4px 6px 0 6px;
+}
+
+.chmp-nav-onoff-on .chmp-nav-btn-off {
+	padding: 4px 6px 0 0;
+	cursor: pointer;
+}
+
+.chmp-nav-onoff-off .chmp-nav-btn-on {
+	padding: 4px 0 0 6px;
+	cursor: pointer;
+}
+
+.chmp-nav-onoff-off .chmp-nav-btn-off {
+	background: #fff;
+	border-radius: 9px;
+	padding: 4px 6px 0 6px;
+}
+
+/* end edit on off */
+
+/*expandable button*/
+.chmp-button-expandable {
+	display: inline-block;
+	position: relative;
+	height: 24px;
+}
+
+.chmp-button-expandable .chmp-input-small {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2147483640;
+}
+
+.chmp-input-expand {
+	position: absolute;
+	z-index: 2147483639;
+	background: #008800;
+	height: 24px;
+	-webkit-box-shadow: inset 0 -1px rgba(0, 0, 0, .75);
+	-moz-box-shadow: inset 0 -1px rgba(0, 0, 0, .75);
+	box-shadow: inset 0 -1px rgba(0, 0, 0, .75);
+	cursor: pointer;
+	border-radius: 0px 3px 3px 0px;
+	top: 0;
+	left: 0px;
+
+	/*border-left: 1px solid #000;*/
+	-webkit-transition: 0.3s ease-in-out;
+	-moz-transition: 0.3s ease-in-out;
+	-o-transition: 0.3s ease-in-out;
+	transition: 0.3s ease-in-out;
+}
+
+.chmp-input-expanded1 {
+	border-radius: 3px 0px 0px 3px !important;
+}
+
+.chmp-input-expanded2 {
+	left: 140px;
+}
+
+.chmp-input-expand p {
+	color: #fff;
+	margin: 6px 0 0 0;
+	font-weight: bold;
+	padding: 0 10px 0 10px;
+	white-space: nowrap;
+}
+
+.chmp-input-confirm {
+	color: #fff;
+}
+
+.chmp-input-cancel {
+	color: #bce5b5;
+}
+
+/*end expandable button*/
+
+/* show hide navigation*/
+.chmp-nav-showhide-btn {
+	width: 36px;
+	height: 36px;
+	padding: 14px 0 0 12px;
+	position: absolute;
+	z-index: 2147483641;
+	top: 0;
+	left: 0;
+	background-color: #4f4f4f;
+	border-right: 1px solid #272727;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* if navigation is floating we add extra padding */
+.chmp-nav-float {
+	padding: 0 10px 0 50px !important;
+}
+
+.chmp-nav-float-hide {
+	top: -36px !important;
+}
+
+.chmp-nav-shadow {
+	border-bottom: 1px solid #272727;
+	-webkit-box-shadow: 0 1px 4px #000;
+	-moz-box-shadow: 0 1px 4px #000;
+	box-shadow: 0 1px 4px #000;
+}
+
+/*end show hide navigation*/
+
+/* icons */
+
+.chmp-ico-w-text {
+	margin: 5px 0 0 0 !important;
+	padding: 0 0 0 18px !important;
+}
+
+.chmp-ico-w-text span {
+	line-height: 14px;
+	font-size: 11px;
+}
+
+.chmp-ico-leftarrow {
+	background: url(chmpsprites.png) no-repeat 0 -128px;
+	background-size: 32px 1000px;
+	min-width: 10px;
+	min-height: 10px;
+}
+
+.chmp-ico-rightarrow {
+	background: url(chmpsprites.png) no-repeat 0 -160px;
+	background-size: 32px 1000px;
+	min-width: 10px;
+	min-height: 10px;
+}
+
+.chmp-ico-downarrow {
+	background: url(chmpsprites.png) no-repeat 0 -192px;
+	background-size: 32px 1000px;
+	min-width: 10px;
+	min-height: 10px;
+}
+
+.chmp-ico-uparrow {
+	background: url(chmpsprites.png) no-repeat 0 -224px;
+	background-size: 32px 1000px;
+	min-width: 10px;
+	min-height: 10px;
+}
+
+.chmp-ico-settings {
+	background: url(chmpsprites.png) no-repeat 0 -256px;
+	background-size: 32px 1000px;
+	min-width: 12px;
+	min-height: 12px;
+}
 
 
-	<style type="text/css">
+</style>
 
-		/* just some testing values so we can see that chmp will be working inside another style*/
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 
-		body {
-			background: pink;
-		}
+<script type="text/javascript">
+	$(document).ready(function () {
 
-		div, a, span, td {
-			font-family: fantasy;
-			font-size: 24px;
-			color: blue;
-			color: #eb15c8;
-		}
-	</style>
+		$(document).on('click', '.chmp-do-expand', function () {
+			$(this).toggleClass('chmp-input-expanded1').parent().children('.chmp-input-expand').toggleClass('chmp-input-expanded2');
 
-	<link rel="stylesheet" type="text/css" href="chmp.css">
+		});
+
+		$(document).on('click', '.chmp-input-cancel', function () {
+			$(this).parent().parent().toggleClass('chmp-input-expanded2').parent().children('.chmp-do-expand').toggleClass('chmp-input-expanded1');
+
+		});
+
+		$(document).on('click', '#chmp-nav-showhide', function () {
+			$(this).toggleClass('chmp-nav-shadow').children('p').toggleClass('chmp-ico-uparrow');
+			$("#chmp-nav").toggleClass('chmp-nav-float-hide');
+
+		});
 
 
-	<title></title>
+	});
+</script>
+
+
+<title></title>
 </head>
 
 <body>
 
-<div class="chmp-navigaton">
+<div class="chmp chmp-navigation-holder">
+
+	<div class="chmp chmp-nav-showhide-btn" id="chmp-nav-showhide"><p class="chmp chmp-ico-downarrow"></p></div>
+
+	<div class="chmp chmp-navigation" id="chmp-nav">
+
+		<div class="chmp chmp-nav-edit chmp-nav-float">
+
+
+			<div class="chmp chmp-nav-part chmp-nav-part-text">
+				<p>EDIT:</p>
+			</div>
+
+			<div class="chmp chmp-nav-part">
+				<div class="chmp chmp-nav-onoff-holder">
+					<div class="chmp chmp-nav-onoff chmp-nav-onoff-on">
+						<div class="chmp chmp-nav-onoff-inner">
+							<div class="chmp chmp-nav-onoff-btn chmp-nav-btn-on">ON</div>
+							<div class="chmp chmp-nav-onoff-btn chmp-nav-btn-off">OFF</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="chmp chmp-nav-part chmp-nav-part-btn">
+				<div class="chmp chmp-input-dynamic chmp-button"><p>Change image</p></div>
+			</div>
+
+
+			<div class="chmp chmp-nav-part chmp-nav-part-btn">
+				<div class="chmp chmp-button-expandable">
+					<div class="chmp chmp-input-small chmp-submit chmp-do-expand"><p>Publish</p></div>
+					<div class="chmp chmp-input-expand"><p><a href="javascript:;"
+					                                          class="chmp chmp-input-cancel">CANCEL</a> &nbsp; <a
+							href="javascript:;" class="chmp chmp-input-confirm">OK!</a></p></div>
+				</div>
+			</div>
+
+
+			<div class="chmp chmp-right">
+				<div class="chmp chmp-nav-part chmp-nav-part-btn">
+					<div class="chmp chmp-input-dynamic chmp-button"><p class="chmp-ico-settings chmp-ico-w-text"><span>SITE SETTINGS</span>
+					</p></div>
+
+
+				</div>
+
+			</div>
+
+
+		</div>
+		<!-- end .chmp-nav-edit -->
+
+	</div>
+	<!-- end #chmp-nav -->
+
+</div>
+<!-- end chmp-navigation-holder -->
+
+
+<div class="test2">
 
 
 </div>
 
-<div id="chmp-powerTip" class="test1">
-	<p class="chmp chmp-tooltip-headline chmp-tooltip-element">Lorem ipsum</p>
 
-	<p class="chmp chmp-tooltip-body chmp-tooltip-element">Fill something out here</p>
+<!--
+<div class="chmp-powerTip">
+	<div class="chmp chmp-close"></div>
+	<p class="chmp chmp-tooltip-headline chmp-tooltip-element">Edit image</p>
+	<div class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit"><p>Change image</p></div>
+	<p class="chmp chmp-tooltip-body chmp-tooltip-element">Alt/title text:</p>
 	<input type="text" class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-input-text"
-	       placeholder="Username"><br>
-	<input type="password" class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-input-text"
-	       placeholder="Password"><br>
-	<input type="submit" class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit" value="Log in">
-
-	<p class="chmp chmp-tooltip-body chmp-tooltip-element"><input type="checkbox" id="test"><label for="test"
-	                                                                                               class="chmp">Text</label>
-	</p>
-
-	<p class="chmp chmp-tooltip-body chmp-tooltip-element"><a href="#" class="chmp">Forgot password</a></p>
-
+	       value="Username">
+	<div class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit"><p>Save text</p></div>
 </div>
+-->
 
 
 </body>

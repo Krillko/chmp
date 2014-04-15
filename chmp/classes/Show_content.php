@@ -8,11 +8,12 @@
  */
 class Show_content {
 
+	public $edit;
 
 	function __construct($template, $content) {
 		$this->template = $template;
 		$this->content  = $content;
-
+		$this->edit = FALSE;
 	}
 
 
@@ -29,9 +30,15 @@ class Show_content {
 		return $out;
 	}
 
+	public function set_edit($edit = TRUE) {
+		$this->edit = $edit;
+	}
+
+
 	/** Returns html for a content area
 	 *
 	 * @param $element
+	 * @internal param bool $edit
 	 * @return string
 	 */
 	public function show_contentarea($element) {
@@ -57,6 +64,7 @@ class Show_content {
 		$output = '';
 
 		$module_design        = $this->template->get_module_design($contentarea_uid, $element[ 'uid' ]);
+		$module_attr = $this->template->get_module_elements($contentarea_uid, $element[ 'uid' ], 'attr');
 		$module_elements_text = $this->template->get_module_elements($contentarea_uid, $element[ 'uid' ], 'text');
 		$module_elements_img  = $this->template->get_module_elements($contentarea_uid, $element[ 'uid' ], 'img');
 
@@ -66,8 +74,8 @@ class Show_content {
 		foreach ( $module_elements_text as $module_elements_row ) {
 			foreach ( $module->find('*[data-chmp-name*=' . $module_elements_row[ 'data-chmp-name' ] . ']') as $thisTag ) {
 				// checking so that the template doesnt have texts and images named the same
-				if ( Tools::tag_kind($thisTag->tag) == 'text' ) {
-					$thisTag->outertext = $element[ 'text' ][ $module_elements_row[ 'data-chmp-name' ] ];
+				if ( Config::tag_kind($thisTag->tag) == 'text' ) {
+					$thisTag->innertext = $element[ 'text' ][ $module_elements_row[ 'data-chmp-name' ] ];
 				}
 			}
 		}
@@ -75,13 +83,29 @@ class Show_content {
 		foreach ( $module_elements_img as $module_elements_row ) {
 			foreach ( $module->find('*[data-chmp-name*=' . $module_elements_row[ 'data-chmp-name' ] . ']') as $thisTag ) {
 				// checking so that the template doesnt have texts and images named the same
-				if ( Tools::tag_kind($thisTag->tag) == 'img' ) {
+				if ( Config::tag_kind($thisTag->tag) == 'img' ) {
 					$thisTag->outertext = $this->show_image($element[ 'img' ][ $module_elements_row[ 'data-chmp-name' ] ], $module_elements_row);
 				}
 			}
 		}
 
-		$output = $module->save();
+		if ( $this->edit ) {
+			$module_attr = $this->template->get_module_elements($contentarea_uid, $element[ 'uid' ], 'attr');
+			$attr        = '';
+			// keeps attr
+			foreach ( $module_attr as $attrK => $attrV ) {
+				$attr .= ' ' . $attrK . '="' . $attrV . '"';
+			}
+
+			// adds temporary unique id
+			$attr .= ' data-chmp-tuid="' . uniqid('text') . '"';
+
+			$output = '<div class="chmp-edit-module" ' . $attr . '>' . $module->save() . '</div>';
+
+
+		} else {
+			$output = $module->save();
+		}
 
 		$module->clear();
 		unset( $module );
@@ -102,7 +126,7 @@ class Show_content {
 
 		if ( is_array($element) ) {
 
-			$out = '<img src="chmp/assets/images/' . $element[ 'uid' ] . '.' . ( $element[ 'format' ] != '' ? $element[ 'format' ] : 'jpg' ) . '"';
+			$out = ( $this->edit ? '<div class="chmp chmp-edit-holder">' : '' ) . '<img src="chmp/assets/images/' . $element[ 'uid' ] . '.' . ( $element[ 'format' ] != '' ? $element[ 'format' ] : 'jpg' ) . '"';
 
 			if ( $element[ 'width' ] > 0 ) {
 				$out .= ' width="' . $element[ 'width' ] . '"';
@@ -114,6 +138,42 @@ class Show_content {
 
 			if ( $element[ 'alt' ] != '' ) {
 				$out .= ' alt="' . $element[ 'alt' ] . '" title="' . $element[ 'alt' ] . '"';
+			}
+
+			// adds a temporary unique id, to communicate to and from iframe in javascript
+			$out .= ' data-chmp-tuid="' . uniqid('img') . '"';
+
+			// original image - id same as manifest
+			$out .= ' data-chmp-orgimgid="' . $element[ 'orgImgId' ] . '"';
+
+			$generated_attr = array( 'src', 'width', 'height', 'alt', 'title' );
+
+			// adding template attibutes, except genrated, removes data-chmp- if not in edit mode
+
+			foreach ( $design as $designKey => $designValue ) {
+
+				if ( substr($designKey, 0, 10) == 'data-chmp-' ) {
+					if ( $this->edit ) {
+						$out .= ' ' . $designKey . '="' . $designValue . '"';
+
+					}
+
+				} elseif ( $designKey == 'class' ) {
+
+					$out .= ' ' . $designKey . '="' . $designValue . ' chmp-editable chmp-editable-img"';
+
+				} elseif ( !in_array($designKey, $generated_attr) ) {
+					$out .= ' ' . $designKey . '="' . $designValue . '"';
+
+				}
+
+
+			}
+
+			// adds edit classes if template has no class
+			if ( !array_key_exists('class', $design) ) {
+				$out .= ' class="chmp-editable chmp-editable-img"';
+
 			}
 
 			$out .= '>';
@@ -131,7 +191,7 @@ class Show_content {
 				$out .= ' height="' . ( $design[ 'data-chmp-height' ] > 0 ? $design[ 'data-chmp-height' ] : $design[ 'height' ] ) . '"';
 			}
 
-			$out .= '>';
+			$out .= '>' . ( $this->edit ? '</div>' : '' );
 
 		}
 

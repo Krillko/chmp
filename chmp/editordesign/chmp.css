@@ -20,8 +20,15 @@
 	box-sizing: border-box;
 }
 
+.chmp-edit-contentarea, .chmp-edit-module {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+}
+
 /* powertip will be able to add a class in the next version. Change to .chmp for most values */
-#chmp-powerTip {
+#chmp-powerTip, .chmp-powerTip {
 	cursor: default;
 	background-color: #4f4f4f;
 	border-radius: 3px;
@@ -43,14 +50,41 @@
 	line-height: 10px;
 }
 
+.chmp-powerTip-img {
+	top: 10px;
+	left: 10px;
+}
+
+.chmp-close {
+	background: url(chmpsprites.png) no-repeat 0 -96px;
+	background-size: 32px 1000px;
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	cursor: pointer;
+}
+
 .chmp-input-small {
+	display: inline-block;
 	width: 140px;
+	border-radius: 3px;
+}
+
+.chmp-input-dynamic {
+	display: inline-block;
+	padding: 0 12px 0 10px;
 	border-radius: 3px;
 }
 
 .chmp-tooltip-element {
 	margin: 0 0 8px 0;
 	color: #fff;
+}
+
+.chmp-input {
+	color: #000;
 }
 
 .chmp-tooltip-element a {
@@ -78,8 +112,8 @@
 	padding: 0 3px 0 3px;
 }
 
-.chmp-submit {
-	background-color: #42ac43;
+.chmp-submit, .chmp-button {
+	background: #42ac43;
 	color: #fff;
 	text-transform: uppercase;
 	text-align: center;
@@ -92,9 +126,22 @@
 	cursor: pointer;
 }
 
-.chmp-submit p {
+.chmp-button {
+	background: #767676;
+}
+
+.chmp-submit p, .chmp-submit div, .chmp-button p, .chmp-button div {
 	padding: 6px 0 0 0;
 	text-align: center;
+	color: #fff;
+	margin: 0;
+}
+
+.chmp-submit p span, .chmp-submit div span, .chmp-button p span, .chmp-button div span {
+	color: #fff;
+	margin: 0;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 11px;
 }
 
 .chmp-singleline {
@@ -104,3 +151,106 @@
 .chmp-clear {
 	clear: both;
 }
+
+.chmp-editable-img {
+	cursor: pointer;
+	cursor: url(arrow-edit.png) 0 1, pointer;
+}
+
+.chmp-edit-holder {
+	position: relative;
+}
+
+.chmp-editable-img-btn {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	z-index: 10000;
+}
+
+/**
+* Copied from :
+ * Featherlight – ultra slim jQuery lightbox
+ * Version 0.3.1 - http://noelboss.github.io/featherlight/
+ *
+ * Copyright 2014, Noël Raoul Bossart (http://www.noelboss.com)
+ * MIT Licensed.
+**/
+@media all {
+	.chmp-featherlight {
+		display: none;
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 9999;
+		height: 100%;
+		text-align: center;
+		cursor: pointer;
+		background: #333;
+		background: rgba(0, 0, 0, 0.8);
+	}
+
+	.chmp-featherlight .chmp-featherlight-close {
+		position: absolute;
+		z-index: 9999;
+		right: 0px;
+		top: 0px;
+		line-height: 25px;
+		width: 25px;
+		cursor: pointer;
+		text-decoration: none;
+		text-align: center;
+		font: Arial, sans-serif;
+		background: #fff;
+		color: #000;
+	}
+
+	.chmp-featherlight:before {
+		content: '';
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+		margin-right: -0.25em;
+	}
+
+	.chmp-featherlight .chmp-featherlight-content {
+		text-align: left;
+		display: inline-block;
+		vertical-align: middle;
+		position: relative;
+		padding: 0;
+		min-width: 1024px;
+		min-height: 628px;
+		width: 1034px;
+		height: 638px;
+		max-height: 95%;
+		overflow: auto;
+		background: #fff;
+		cursor: auto;
+	}
+
+	.chmp-featherlight .chmp-featherlight-inner {
+		display: block;
+	}
+
+	.chmp-featherlight-iframe .chmp-featherlight-content {
+		min-height: 60%;
+	}
+
+	.chmp-featherlight iframe {
+		border: none;
+		position: absolute;
+		top: 0; bottom: 0;
+		left: 0; right: 0;
+		height: 100%;
+		width: 100%;
+	}
+
+	.chmp-featherlight .chmp-featherlight-image {
+		width: 100%;
+		max-height: 85vh;
+	}
+}
+

@@ -67,9 +67,9 @@ define( 'MAX_FILE_SIZE', 600000 );
 // -----------------------------------------------------------------------------
 // get html dom from file
 // $maxlen is defined in the code as PHP_STREAM_COPY_ALL which is defined as -1.
-function file_get_html($url, $use_include_path = FALSE, $context = null, $offset = -1, $maxLen = -1, $lowercase = TRUE, $forceTagsClosed = TRUE, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN = TRUE, $defaultBRText = DEFAULT_BR_TEXT, $defaultSpanText = DEFAULT_SPAN_TEXT) {
+function file_get_html($url, $use_include_path = FALSE, $context = NULL, $offset = -1, $maxLen = -1, $lowercase = TRUE, $forceTagsClosed = TRUE, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN = TRUE, $defaultBRText = DEFAULT_BR_TEXT, $defaultSpanText = DEFAULT_SPAN_TEXT) {
 	// We DO force the tags to be terminated.
-	$dom = new simple_html_dom( null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText );
+	$dom = new simple_html_dom( NULL, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText );
 	// For sourceforge users: uncomment the next line and comment the retreive_url_contents line 2 lines down if it is not already done.
 	$contents = file_get_contents($url, $use_include_path, $context, $offset);
 	// Paperg - use our own mechanism for getting the contents as we want to control the timeout.
@@ -85,7 +85,7 @@ function file_get_html($url, $use_include_path = FALSE, $context = null, $offset
 
 // get html dom from string
 function str_get_html($str, $lowercase = TRUE, $forceTagsClosed = TRUE, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN = TRUE, $defaultBRText = DEFAULT_BR_TEXT, $defaultSpanText = DEFAULT_SPAN_TEXT) {
-	$dom = new simple_html_dom( null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText );
+	$dom = new simple_html_dom( NULL, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText );
 	if ( empty( $str ) || strlen($str) > MAX_FILE_SIZE ) {
 		$dom->clear();
 
@@ -115,11 +115,11 @@ class simple_html_dom_node {
 	public $attr = array();
 	public $children = array();
 	public $nodes = array();
-	public $parent = null;
+	public $parent = NULL;
 	// The "info" array - see HDOM_INFO_... for what each element contains.
 	public $_ = array();
 	public $tag_start = 0;
-	private $dom = null;
+	private $dom = NULL;
 
 	function __construct($dom) {
 		$this->dom     = $dom;
@@ -136,10 +136,10 @@ class simple_html_dom_node {
 
 	// clean up memory due to php5 circular references memory leak...
 	function clear() {
-		$this->dom      = null;
-		$this->nodes    = null;
-		$this->parent   = null;
-		$this->children = null;
+		$this->dom      = NULL;
+		$this->nodes    = NULL;
+		$this->parent   = NULL;
+		$this->children = NULL;
 	}
 
 	// dump node's tree
@@ -217,10 +217,10 @@ class simple_html_dom_node {
 
 	// returns the parent of node
 	// If a node is passed in, it will reset the parent of the current node to that one.
-	function parent($parent = null) {
+	function parent($parent = NULL) {
 		// I am SURE that this doesn't work properly.
 		// It fails to unset the current node from it's current parents nodes or children list first.
-		if ( $parent !== null ) {
+		if ( $parent !== NULL ) {
 			$this->parent              = $parent;
 			$this->parent->nodes[ ]    = $this;
 			$this->parent->children[ ] = $this;
@@ -241,7 +241,7 @@ class simple_html_dom_node {
 		}
 		if ( isset( $this->children[ $idx ] ) ) return $this->children[ $idx ];
 
-		return null;
+		return NULL;
 	}
 
 	// returns the first child of node
@@ -250,7 +250,7 @@ class simple_html_dom_node {
 			return $this->children[ 0 ];
 		}
 
-		return null;
+		return NULL;
 	}
 
 	// returns the last child of node
@@ -259,13 +259,13 @@ class simple_html_dom_node {
 			return $this->children[ $count - 1 ];
 		}
 
-		return null;
+		return NULL;
 	}
 
 	// returns the next sibling of node
 	function next_sibling() {
-		if ( $this->parent === null ) {
-			return null;
+		if ( $this->parent === NULL ) {
+			return NULL;
 		}
 
 		$idx   = 0;
@@ -274,7 +274,7 @@ class simple_html_dom_node {
 			++$idx;
 		}
 		if ( ++$idx >= $count ) {
-			return null;
+			return NULL;
 		}
 
 		return $this->parent->children[ $idx ];
@@ -282,12 +282,12 @@ class simple_html_dom_node {
 
 	// returns the previous sibling of node
 	function prev_sibling() {
-		if ( $this->parent === null ) return null;
+		if ( $this->parent === NULL ) return NULL;
 		$idx   = 0;
 		$count = count($this->parent->children);
 		while ( $idx < $count && $this !== $this->parent->children[ $idx ] )
 			++$idx;
-		if ( --$idx < 0 ) return null;
+		if ( --$idx < 0 ) return NULL;
 
 		return $this->parent->children[ $idx ];
 	}
@@ -344,7 +344,7 @@ class simple_html_dom_node {
 		if ( $this->tag === 'root' ) return $this->innertext();
 
 		// trigger callback
-		if ( $this->dom && $this->dom->callback !== null ) {
+		if ( $this->dom && $this->dom->callback !== NULL ) {
 			call_user_func_array($this->dom->callback, array( $this ));
 		}
 
@@ -433,7 +433,7 @@ class simple_html_dom_node {
 			++$i;
 
 			// skip removed attribute
-			if ( $val === null || $val === FALSE )
+			if ( $val === NULL || $val === FALSE )
 				continue;
 
 			$ret .= $this->_[ HDOM_INFO_SPACE ][ $i ][ 0 ];
@@ -461,7 +461,7 @@ class simple_html_dom_node {
 
 	// find elements by css selector
 	//PaperG - added ability for find to lowercase the value of the selector.
-	function find($selector, $idx = null, $lowercase = FALSE) {
+	function find($selector, $idx = NULL, $lowercase = FALSE) {
 		$selectors = $this->parse_selector($selector);
 		if ( ( $count = count($selectors) ) === 0 ) return array();
 		$found_keys = array();
@@ -503,7 +503,7 @@ class simple_html_dom_node {
 		if ( is_null($idx) ) return $found;
 		else if ( $idx < 0 ) $idx = count($found) + $idx;
 
-		return ( isset( $found[ $idx ] ) ) ? $found[ $idx ] : null;
+		return ( isset( $found[ $idx ] ) ) ? $found[ $idx ] : NULL;
 	}
 
 	// seek for given conditions
@@ -535,7 +535,7 @@ class simple_html_dom_node {
 		$end = ( !empty( $this->_[ HDOM_INFO_END ] ) ) ? $this->_[ HDOM_INFO_END ] : 0;
 		if ( $end == 0 ) {
 			$parent = $this->parent;
-			while ( !isset( $parent->_[ HDOM_INFO_END ] ) && $parent !== null ) {
+			while ( !isset( $parent->_[ HDOM_INFO_END ] ) && $parent !== NULL ) {
 				$end -= 1;
 				$parent = $parent->parent;
 			}
@@ -669,7 +669,7 @@ class simple_html_dom_node {
 			// for browser generated xpath
 			if ( $m[ 1 ] === 'tbody' ) continue;
 
-			list( $tag, $key, $val, $exp, $no_key ) = array( $m[ 1 ], null, null, '=', FALSE );
+			list( $tag, $key, $val, $exp, $no_key ) = array( $m[ 1 ], NULL, NULL, '=', FALSE );
 			if ( !empty( $m[ 2 ] ) ) {
 				$key = 'id';
 				$val = $m[ 2 ];
@@ -933,15 +933,15 @@ class simple_html_dom_node {
 
 	function hasAttribute($name) { return $this->__isset($name); }
 
-	function removeAttribute($name) { $this->__set($name, null); }
+	function removeAttribute($name) { $this->__set($name, NULL); }
 
 	function getElementById($id) { return $this->find("#$id", 0); }
 
-	function getElementsById($id, $idx = null) { return $this->find("#$id", $idx); }
+	function getElementsById($id, $idx = NULL) { return $this->find("#$id", $idx); }
 
 	function getElementByTagName($name) { return $this->find($name, 0); }
 
-	function getElementsByTagName($name, $idx = null) { return $this->find($name, $idx); }
+	function getElementsByTagName($name, $idx = NULL) { return $this->find($name, $idx); }
 
 	function parentNode() { return $this->parent(); }
 
@@ -976,9 +976,9 @@ class simple_html_dom_node {
  * @package PlaceLocalInclude
  */
 class simple_html_dom {
-	public $root = null;
+	public $root = NULL;
 	public $nodes = array();
-	public $callback = null;
+	public $callback = NULL;
 	public $lowercase = FALSE;
 	// Used to keep track of how large the text was when we started.
 	public $original_size;
@@ -1018,7 +1018,7 @@ class simple_html_dom {
 		'option' => array( 'option' => 1 ),
 	);
 
-	function __construct($str = null, $lowercase = TRUE, $forceTagsClosed = TRUE, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN = TRUE, $defaultBRText = DEFAULT_BR_TEXT, $defaultSpanText = DEFAULT_SPAN_TEXT) {
+	function __construct($str = NULL, $lowercase = TRUE, $forceTagsClosed = TRUE, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN = TRUE, $defaultBRText = DEFAULT_BR_TEXT, $defaultSpanText = DEFAULT_SPAN_TEXT) {
 		if ( $str ) {
 			if ( preg_match("/^http:\/\//i", $str) || is_file($str) ) {
 				$this->load_file($str);
@@ -1078,7 +1078,7 @@ class simple_html_dom {
 		$args = func_get_args();
 		$this->load(call_user_func_array('file_get_contents', $args), TRUE);
 		// Throw an error if we can't properly load the dom.
-		if ( ( $error = error_get_last() ) !== null ) {
+		if ( ( $error = error_get_last() ) !== NULL ) {
 			$this->clear();
 
 			return FALSE;
@@ -1092,7 +1092,7 @@ class simple_html_dom {
 
 	// remove callback function
 	function remove_callback() {
-		$this->callback = null;
+		$this->callback = NULL;
 	}
 
 	// save dom as string
@@ -1105,7 +1105,7 @@ class simple_html_dom {
 
 	// find dom node by css selector
 	// Paperg - allow us to specify that we want case insensitive testing of the value of the selector.
-	function find($selector, $idx = null, $lowercase = FALSE) {
+	function find($selector, $idx = NULL, $lowercase = FALSE) {
 		return $this->root->find($selector, $idx, $lowercase);
 	}
 
@@ -1113,12 +1113,12 @@ class simple_html_dom {
 	function clear() {
 		foreach ( $this->nodes as $n ) {
 			$n->clear();
-			$n = null;
+			$n = NULL;
 		}
 		// This add next line is documented in the sourceforge repository. 2977248 as a fix for ongoing memory leaks that occur even with the use of clear.
 		if ( isset( $this->children ) ) foreach ( $this->children as $n ) {
 			$n->clear();
-			$n = null;
+			$n = NULL;
 		}
 		if ( isset( $this->parent ) ) {
 			$this->parent->clear();
@@ -1191,7 +1191,7 @@ class simple_html_dom {
 	protected function parse_charset() {
 		global $debugObject;
 
-		$charset = null;
+		$charset = NULL;
 
 		if ( function_exists('get_last_retrieve_url_contents_content_type') ) {
 			$contentTypeHeader = get_last_retrieve_url_contents_content_type();
@@ -1268,11 +1268,11 @@ class simple_html_dom {
 			return FALSE;
 		}
 		$begin_tag_pos = $this->pos;
-		$this->char    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+		$this->char    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 
 		// end tag
 		if ( $this->char === '/' ) {
-			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 			// This represents the change in the simple_html_dom trunk from revision 180 to 181.
 			// $this->skip($this->token_blank_t);
 			$this->skip($this->token_blank);
@@ -1323,7 +1323,7 @@ class simple_html_dom {
 			$this->parent->_[ HDOM_INFO_END ] = $this->cursor;
 			if ( $this->parent->parent ) $this->parent = $this->parent->parent;
 
-			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 			return TRUE;
 		}
 
@@ -1346,7 +1346,7 @@ class simple_html_dom {
 			}
 			if ( $this->char === '>' ) $node->_[ HDOM_INFO_TEXT ] .= '>';
 			$this->link_nodes($node, TRUE);
-			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 			return TRUE;
 		}
 
@@ -1369,7 +1369,7 @@ class simple_html_dom {
 
 			if ( $this->char === '>' ) $node->_[ HDOM_INFO_TEXT ] .= '>';
 			$this->link_nodes($node, FALSE);
-			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+			$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 			return TRUE;
 		}
 
@@ -1392,12 +1392,12 @@ class simple_html_dom {
 
 		// attributes
 		do {
-			if ( $this->char !== null && $space[ 0 ] === '' ) {
+			if ( $this->char !== NULL && $space[ 0 ] === '' ) {
 				break;
 			}
 			$name = $this->copy_until($this->token_equal);
 			if ( $guard === $this->pos ) {
-				$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+				$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 				continue;
 			}
 			$guard = $this->pos;
@@ -1421,7 +1421,7 @@ class simple_html_dom {
 				$node->_[ HDOM_INFO_END ]  = 0;
 				$node->_[ HDOM_INFO_TEXT ] = substr($this->doc, $begin_tag_pos, $this->pos - $begin_tag_pos - 1);
 				$this->pos -= 2;
-				$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+				$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 				$this->link_nodes($node, FALSE);
 
 				return TRUE;
@@ -1432,7 +1432,7 @@ class simple_html_dom {
 				$name       = $this->restore_noise($name);
 				if ( $this->lowercase ) $name = strtolower($name);
 				if ( $this->char === '=' ) {
-					$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+					$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 					$this->parse_attr($node, $name, $space);
 				} else {
 					//no value attr: nowrap, checked selected...
@@ -1457,7 +1457,7 @@ class simple_html_dom {
 			// reset parent
 			if ( !isset( $this->self_closing_tags[ strtolower($node->tag) ] ) ) $this->parent = $node;
 		}
-		$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+		$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 
 		// If it's a BR tag, we need to set it's text to the default text.
 		// This way when we see it in plaintext, we can generate formatting that the user wants.
@@ -1481,15 +1481,15 @@ class simple_html_dom {
 		switch ($this->char) {
 			case '"':
 				$node->_[ HDOM_INFO_QUOTE ][ ] = HDOM_QUOTE_DOUBLE;
-				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 				$node->attr[ $name ]           = $this->restore_noise($this->copy_until_char_escape('"'));
-				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 				break;
 			case '\'':
 				$node->_[ HDOM_INFO_QUOTE ][ ] = HDOM_QUOTE_SINGLE;
-				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 				$node->attr[ $name ]           = $this->restore_noise($this->copy_until_char_escape('\''));
-				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+				$this->char                    = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 				break;
 			default:
 				$node->_[ HDOM_INFO_QUOTE ][ ] = HDOM_QUOTE_NO;
@@ -1519,20 +1519,20 @@ class simple_html_dom {
 		++$this->cursor;
 		$node->_[ HDOM_INFO_TEXT ] = '</' . $tag . '>';
 		$this->link_nodes($node, FALSE);
-		$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+		$this->char = ( ++$this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 		return TRUE;
 	}
 
 	protected function skip($chars) {
 		$this->pos += strspn($this->doc, $chars, $this->pos);
-		$this->char = ( $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+		$this->char = ( $this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 	}
 
 	protected function copy_skip($chars) {
 		$pos = $this->pos;
 		$len = strspn($this->doc, $chars, $pos);
 		$this->pos += $len;
-		$this->char = ( $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+		$this->char = ( $this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 		if ( $len === 0 ) return '';
 
 		return substr($this->doc, $pos, $len);
@@ -1542,16 +1542,16 @@ class simple_html_dom {
 		$pos = $this->pos;
 		$len = strcspn($this->doc, $chars, $pos);
 		$this->pos += $len;
-		$this->char = ( $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
+		$this->char = ( $this->pos < $this->size ) ? $this->doc[ $this->pos ] : NULL; // next
 		return substr($this->doc, $pos, $len);
 	}
 
 	protected function copy_until_char($char) {
-		if ( $this->char === null ) return '';
+		if ( $this->char === NULL ) return '';
 
 		if ( ( $pos = strpos($this->doc, $char, $this->pos) ) === FALSE ) {
 			$ret        = substr($this->doc, $this->pos, $this->size - $this->pos);
-			$this->char = null;
+			$this->char = NULL;
 			$this->pos  = $this->size;
 
 			return $ret;
@@ -1566,13 +1566,13 @@ class simple_html_dom {
 	}
 
 	protected function copy_until_char_escape($char) {
-		if ( $this->char === null ) return '';
+		if ( $this->char === NULL ) return '';
 
 		$start = $this->pos;
 		while ( 1 ) {
 			if ( ( $pos = strpos($this->doc, $char, $start) ) === FALSE ) {
 				$ret        = substr($this->doc, $this->pos, $this->size - $this->pos);
-				$this->char = null;
+				$this->char = NULL;
 				$this->pos  = $this->size;
 
 				return $ret;
@@ -1690,13 +1690,13 @@ class simple_html_dom {
 
 	function lastChild() { return $this->root->last_child(); }
 
-	function createElement($name, $value = null) { return @str_get_html("<$name>$value</$name>")->first_child(); }
+	function createElement($name, $value = NULL) { return @str_get_html("<$name>$value</$name>")->first_child(); }
 
 	function createTextNode($value) { return @end(str_get_html($value)->nodes); }
 
 	function getElementById($id) { return $this->find("#$id", 0); }
 
-	function getElementsById($id, $idx = null) { return $this->find("#$id", $idx); }
+	function getElementsById($id, $idx = NULL) { return $this->find("#$id", $idx); }
 
 	function getElementByTagName($name) { return $this->find($name, 0); }
 
