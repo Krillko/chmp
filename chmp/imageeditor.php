@@ -102,6 +102,7 @@ $out = '<!DOCTYPE html>
 	<script type="text/javascript">
 		var chmp = chmp || [];
 			chmp.view = "' . $view . '";
+
 	';
 
 if ( $view == 'crop' ) {

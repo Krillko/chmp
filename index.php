@@ -3,18 +3,32 @@
 // naming conventions from code igniter
 
 // testvalues, replace with real
-$page_id       = 1;
 $test_language = 'sv';
-$test_edit = TRUE;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - a collection of "good to have"
+require_once( 'chmp/classes/Tools.php' ); // a collection of "good to have" methods
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  Require classes
 // - - - - - - - - - - - - - - - - - - - - for production
 require_once( 'chmp/classes/Config.php' );
 Config::init();
 
-require_once( 'chmp/classes/Tools.php' ); // a collection of "good to have" methods
-// this file doubles as a settings file
-// for stuff that needs programming to change
+require_once( 'chmp/classes/Session.php' );
+$session = new Session();
+
+if ( isset( $_POST[ 'chmp-login' ] ) ) {
+	$login_result = $session->login($_POST[ 'chmp-login-user' ], $_POST[ 'chmp-login-password' ]);
+}
+
+if ( isset( $_GET[ 'chmp-edit' ] ) ) {
+	$session->set_edit($_GET[ 'chmp-edit' ]);
+}
+
+if ( isset( $_GET[ 'logout' ] ) ) {
+	$session->clear_session();
+}
+
+$page_id = $_GET[ 'page_id' ];
 
 require_once( 'chmp/classes/simple_html_dom.php' ); // parses and manipulates html documents
 
@@ -33,8 +47,11 @@ require_once( 'chmp/classes/Error_log.php' );
 $error_log = new Error_log();
 
 // Builds a page and shows it
-$page = new Show_page();
-$page->load_page($page_id, $test_edit);
+
+$selflocation = 'http://' . $_SERVER[ 'HTTP_HOST' ] . $_SERVER[ 'PHP_SELF' ];
+
+$page = new Show_page( $session->is_edit(), $session->is_loggedin(), $selflocation );
+$page->load_page($page_id);
 
 echo $page->show_page();
 

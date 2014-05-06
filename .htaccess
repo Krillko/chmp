@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+
+    #Tell PHP that the mod_rewrite module is ENABLED.
+    #Solution based on http://christian.roy.name/blog/detecting-modrewrite-using-php
+    #Check in php using array_key_exists('HTTP_MOD_REWRITE', $_SERVER)
+    SetEnv HTTP_MOD_REWRITE On
+
+    RewriteEngine on
+
+	RewriteRule	^chmp/([0-9]+)/?$		index.php?chmp=on&page_id=$1&%{QUERY_STRING}	[L]
+
+	# [NC] = case-insensitive
+    # [L] = do not process more rules if this is matched
+
+
+</IfModule>

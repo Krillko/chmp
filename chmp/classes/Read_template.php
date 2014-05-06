@@ -7,8 +7,8 @@
  * Time: 12:57
  */
 class Read_template_file {
-	function __construct($filepath = 'example.html') {
-		$this->filepath = 'chmp/templates/' . $filepath;
+	function __construct($filepath = 'example.html', $filepath_prefix = '') {
+		$this->filepath = $filepath_prefix . 'chmp/templates/' . $filepath;
 		$this->template = file_get_contents($this->filepath);
 	}
 
@@ -91,11 +91,23 @@ class Read_tempate {
 	 * @param string $type 'all', 'text', 'img', 'attr'
 	 * @return array
 	 */
-	public function get_module_elements($content_uid, $module_uid, $type = 'all') {
+	public function get_module_elements($content_uid, $module_uid = '', $type = 'all') {
 		if ( $type == 'all' ) {
-			if ( is_array($this->template[ $content_uid ][ 'modules' ][ $module_uid ]) ) {
+
+			if ( $module_uid == '' and is_array($this->template[ $content_uid ][ 'modules' ]) ) {
+				$output = array();
+
+				foreach ( $this->template[ $content_uid ][ 'modules' ] as $module_row ) {
+					$output[ $module_row[ 'attr' ][ 'data-chmp-uid' ] ] = $module_row[ 'attr' ][ 'data-chmp-name' ];
+				}
+
+				return $output;
+
+			} else if ( is_array($this->template[ $content_uid ][ 'modules' ][ $module_uid ]) ) {
 				return $this->template[ $content_uid ][ 'modules' ][ $module_uid ];
 			}
+		} else if ( $type == 'html' ) {
+			return $this->template[ $content_uid ][ 'modules' ][ $module_uid ][ $type ];
 		} else {
 			if ( is_array($this->template[ $content_uid ][ 'modules' ][ $module_uid ][ $type ]) ) {
 				return $this->template[ $content_uid ][ 'modules' ][ $module_uid ][ $type ];

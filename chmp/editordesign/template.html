@@ -27,13 +27,22 @@ div, a, span, td {
 	background: blue;
 }
 
+.chmp-start-hidden {
+	display: none;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Navigation
+
+.chmp-navigation-holder is omited if the menu is floating
+
+*/
+
 .chmp-navigation-holder {
 	height: 36px;
 	width: 100%;
 	position: relative;
 }
 
-/* .chmp-navigation is omited if the menu is floating */
 .chmp-navigation {
 	position: absolute;
 	top: 0;
@@ -68,8 +77,11 @@ div, a, span, td {
 	margin: 0 10px 0 0;
 }
 
-.chmp-right {
+.chmp-nav-right {
 	float: right;
+	height: 36px;
+	border-left: 1px solid #272727;
+	padding: 0 0 0 15px;
 }
 
 .chmp-nav-part-text p {
@@ -143,11 +155,15 @@ div, a, span, td {
 	height: 24px;
 }
 
-.chmp-button-expandable .chmp-input-small {
+.chmp-input-expand-btn {
 	position: absolute;
 	top: 0;
 	left: 0;
 	z-index: 2147483640;
+}
+
+.chmp-button-expandable {
+	min-width: 140px;
 }
 
 .chmp-input-expand {
@@ -232,6 +248,11 @@ div, a, span, td {
 }
 
 /*end show hide navigation*/
+
+/* saving */
+.chmp-save-icon {
+	margin: 8px 0 0 0;
+}
 
 /* icons */
 
@@ -346,7 +367,8 @@ div, a, span, td {
 
 			<div class="chmp chmp-nav-part chmp-nav-part-btn">
 				<div class="chmp chmp-button-expandable">
-					<div class="chmp chmp-input-small chmp-submit chmp-do-expand"><p>Publish</p></div>
+					<div class="chmp chmp-input-expand-btn chmp-input-small chmp-submit chmp-do-expand"><p>Publish</p>
+					</div>
 					<div class="chmp chmp-input-expand"><p><a href="javascript:;"
 					                                          class="chmp chmp-input-cancel">CANCEL</a> &nbsp; <a
 							href="javascript:;" class="chmp chmp-input-confirm">OK!</a></p></div>
@@ -354,7 +376,12 @@ div, a, span, td {
 			</div>
 
 
-			<div class="chmp chmp-right">
+			<div class="chmp chmp-nav-part chmp-start-hidden" id="chmp-save-animation">
+				<img src="save-animation.gif" alt="save-animation" width="26" height="17" class="chmp chmp-save-icon">
+			</div>
+
+
+			<div class="chmp chmp-nav-right">
 				<div class="chmp chmp-nav-part chmp-nav-part-btn">
 					<div class="chmp chmp-input-dynamic chmp-button"><p class="chmp-ico-settings chmp-ico-w-text"><span>SITE SETTINGS</span>
 					</p></div>

@@ -41,8 +41,17 @@ class Config {
 
 	}
 
+	/**
+	 * Shows a config variable
+	 * @param string $var
+	 * @return string|false
+	 */
 	public static function get($var) {
-		return Config::$config[ $var ];
+		if ( isset( Config::$config[ $var ] ) ) {
+			return Config::$config[ $var ];
+		} else {
+			return FALSE;
+		}
 	}
 
 	public static function jquery() {
@@ -55,9 +64,9 @@ class Config {
 	}
 
 	/**
-	 * Groups together a couple of tags and calls them "text", other tags are just returned
+	 * Groups together a couple of tags and calls them "text", other tags are just returned as is
 	 *
-	 * @param $in
+	 * @param string $in
 	 * @return string
 	 */
 	static public function tag_kind($in) {

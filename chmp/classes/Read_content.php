@@ -9,15 +9,26 @@
 class Read_content {
 	public $content;
 
-	function __construct($pageId) {
-		$content_raw = file_get_contents('chmp/content/' . $pageId . '.json');
+	function __construct($pageId, $edit) {
+
+		// edit creates a new file if not existing
+		// and gets the content of the editfile
+		if ( $edit ) {
+			if ( !is_file('chmp/content/' . $pageId . '_edit.json') ) {
+				copy('chmp/content/' . $pageId . '.json', 'chmp/content/' . $pageId . '_edit.json');
+			}
+			$content_raw = file_get_contents('chmp/content/' . $pageId . '_edit.json');
+
+		} else {
+			$content_raw = file_get_contents('chmp/content/' . $pageId . '.json');
+		}
 
 		$this->content = json_decode($content_raw, TRUE);
 
 
 	}
 
-
+	// gets something specific from info
 	public function get($var) {
 		if ( $var == 'templatefile' ) {
 			if ( isset( $this->content[ 'info' ][ 'templatefile' ] ) ) {
@@ -33,7 +44,17 @@ class Read_content {
 
 		}
 
-		return null;
+		return NULL;
+
+	}
+
+	// returns info as array
+	public function get_info() {
+		if ( isset( $this->content[ 'info' ] ) ) {
+			return ( $this->content[ 'info' ] );
+		} else {
+			return NULL;
+		}
 
 	}
 
