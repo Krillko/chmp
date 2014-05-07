@@ -30,7 +30,7 @@ class Show_page {
 		/* Get content
 			Reads content from chmp/content/[pagenumber].json and makes an array
 		*/
-		$content = new Read_content( $page_id, $this->edit );
+		$content = new Read_content( $page_id, $this->edit, NULL );
 
 		$pageinfo = $content->get_info();
 

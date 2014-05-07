@@ -37,6 +37,12 @@ class Config {
 			Config::$config = $chmp_config;
 		}
 
+		// Making some changes
+		if ( !isset( Config::$config[ 'timezone' ] ) or Config::$config[ 'timezone' ] == '' ) {
+			Config::$config[ 'timezone' ] = date_default_timezone_get();
+		}
+
+
 		// future, get other settings here
 
 	}
@@ -53,6 +59,11 @@ class Config {
 			return FALSE;
 		}
 	}
+
+	public static function set($var, $value) {
+		Config::$config[ $var ] = $value;
+	}
+
 
 	public static function jquery() {
 		if ( Config::$config[ 'jquery_external' ] ) {

@@ -54,3 +54,10 @@ $chmp_config[ 'float_navigation' ] = FALSE;
 // This chr is never shown on published pages, and should be something you wouldn't normally use in a text
 // example if you use default 10002, you can't use ✒ in a text
 $chmp_config[ 'empty_area_chr' ] = 10002;
+
+// - - - - - - - - - - - - - - timezone
+// A list of timezones can be found here:
+// http://www.php.net/manual/en/timezones.php
+// It's used to show when a perticular page was published
+// Leave empty for server default
+$chmp_config[ 'timezone' ] = 'Asia/Bangkok';

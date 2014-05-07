@@ -8,24 +8,25 @@
  */
 class Read_content {
 	public $content;
+	private $version;
 
-	function __construct($pageId, $edit) {
+	function __construct($page_id, $edit, $version) {
 
 		// edit creates a new file if not existing
 		// and gets the content of the editfile
 		if ( $edit ) {
-			if ( !is_file('chmp/content/' . $pageId . '_edit.json') ) {
-				copy('chmp/content/' . $pageId . '.json', 'chmp/content/' . $pageId . '_edit.json');
+			if ( !is_file('chmp/content/' . $page_id . '_edit.json') ) {
+				copy('chmp/content/' . $page_id . '.json', 'chmp/content/' . $page_id . '_edit.json');
 			}
-			$content_raw = file_get_contents('chmp/content/' . $pageId . '_edit.json');
+			$content_raw = file_get_contents('chmp/content/' . $page_id . '_edit.json');
 
 		} else {
-			$content_raw = file_get_contents('chmp/content/' . $pageId . '.json');
+			$content_raw = file_get_contents('chmp/content/' . $page_id . '.json');
 		}
 
 		$this->content = json_decode($content_raw, TRUE);
 
-
+		$this->version = $version;
 	}
 
 	// gets something specific from info

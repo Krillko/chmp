@@ -122,4 +122,52 @@ class Tools {
 	}
 
 
+	/**
+	 * Redirecting to another page
+	 * @param $url
+	 * @param bool $permanent
+	 * @param bool $rand
+	 */
+	static public function redirect($url, $permanent = FALSE, $rand = FALSE) {
+
+		if ( $rand ) {
+			if ( strpos($url, '?') === 0 ) {
+				$url .= '?rnd=' . rand(1, 99999);
+			} else {
+				$url .= '&rnd=' . rand(1, 99999);
+			}
+		}
+
+		if ( !$permanent ) {
+			header("Cache-Control: no-store, no-cache, must-revalidate");
+			header("Cache-Control: post-check=0, pre-check=0", FALSE);
+			header("Pragma: no-cache");
+			header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+			header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+		}
+
+		if ( $permanent ) {
+			header("HTTP/1.1 301 Moved Permanently");
+			header("Location: " . $url, TRUE, 301);
+		} else {
+			header("Location: " . $url);
+		}
+
+		echo '<html>
+		<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<script language="JavaScript" type="text/JavaScript">
+			this.document.location = "' . $url . '";
+		</script>
+		</head>
+		<body>
+		Redirecting to <a href="' . $url . '">' . $url . '</a>
+		</body>
+		</html>';
+		die();
+
+
+	}
+
+
 }
