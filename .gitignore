@@ -17,7 +17,7 @@ chmp/content/*
 chmp/js/production.min.js
 chmp/js/editor.min.js
 chmp/editordesign/chmp.min.css
-
+!chmp/js
 
 # just some folders I use for testing
 css
