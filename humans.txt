@@ -60,3 +60,7 @@ Copyright 2014, Noël Raoul Bossart (http://www.noelboss.com)
 
 Zenpen by Tim Holman (@twholman)
 http://www.zenpen.io
+
+Nestable by David Bushell
+hi@dbushell.com
+https://github.com/dbushell/Nestable
