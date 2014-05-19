@@ -12,6 +12,11 @@ class Read_content {
 
 	function __construct($page_id, $edit, $version) {
 
+		// if there is no file for this page, a new one is created
+		if ( !is_file('chmp/content/' . $page_id . '.json') ) {
+
+		}
+
 		// edit creates a new file if not existing
 		// and gets the content of the editfile
 		if ( $edit ) {

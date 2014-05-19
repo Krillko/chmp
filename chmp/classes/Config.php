@@ -43,7 +43,9 @@ class Config {
 		}
 
 
-		// future, get other settings here
+		// TODO: Read language from database
+
+		// TODO: Reads settings from database and overwrite from file
 
 	}
 

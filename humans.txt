@@ -30,6 +30,9 @@ Well, I can at least try.
 
 /* - - - - - - - - - - - - - Used open source etc*/
 
+Several js functions are from http://phpjs.org/
+Kevin van Zonneveld and contributers: http://phpjs.org/authors/
+
 html5doctor.com Reset Stylesheet v1.6.1
 Author: Richard Clark - http://richclarkdesign.com
 Twitter: @rich_clark
@@ -64,3 +67,5 @@ http://www.zenpen.io
 Nestable by David Bushell
 hi@dbushell.com
 https://github.com/dbushell/Nestable
+
+Ajax load icon from http://ajaxload.info

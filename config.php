@@ -19,6 +19,60 @@ $chmp_config[ 'salt' ] = '$2y$07$' // leave this
 	. 'chmpDefaultSaltPlseChange' // change this, 25 letters ./0-9A-Za-z
 	. '$'; // leave this
 
+
+// - - - - - - - - - - - - - - multi language support
+// turn langage support on
+$chmp_config[ 'language_on' ]  = true;
+
+/* list the langages
+	name
+	langcode, this is not the same as tld, see this list: http://www.w3schools.com/tags/ref_language_codes.asp
+	url, part of the url to find the language, http://yourdomain/{url}/name_of_page
+		Important: NOT NULLABLE!, all chars usually allowed in url except '/',
+		so don't write ex: 'se/' yourself, just 'se'
+
+	Minimum 1 language has to be defined even if we don't use multi-language
+*/
+$chmp_config[ 'languages' ] = array(
+	0 => array( 'name' => 'English',
+				'langcode' => 'en',
+				'url' => 'en'
+	),
+	1 => array( 'name' => 'Svenska',
+				'langcode' => 'sv',
+				'url' => 'se'
+	)
+);
+
+// main language, if we don't know what language the visitor wants
+// we use this one
+$chmp_config[ 'language_main' ] = 0;
+
+/*
+Selects if the main language should have the url part or be in root
+Example, english is main langauge:
+True:
+http://yourdomain/name_of_page
+False:
+http://yourdomain/english/name_of_page
+ */
+$chmp_config[ 'language_main_no_url'] = true;
+
+/*
+Detects the visitors browser language and goes to that page
+
+Can not be together with language_main_no_url
+If true, it sets language_main_no_url to false
+ */
+$chmp_config[ 'language_autodetect'] = false;
+
+
+
+
+
+
+
+
 // - - - - - - - - - - - - - - relative path from root to assets
 $chmp_config[ 'assets_folder' ]  = 'chmp/assets/';
 $chmp_config[ 'content_folder' ] = 'chmp/content/';
@@ -61,3 +115,4 @@ $chmp_config[ 'empty_area_chr' ] = 10002;
 // It's used to show when a perticular page was published
 // Leave empty for server default
 $chmp_config[ 'timezone' ] = 'Asia/Bangkok';
+

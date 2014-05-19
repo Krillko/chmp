@@ -7,6 +7,11 @@
 class Tools {
 
 
+	/**
+	 * Try to make an int from int, string or float (rounded)
+	 * @param $in
+	 * @return int|false
+	 */
 	static public function cleanInt($in) {
 		if ( is_int($in) ) {
 			return ( $in );
@@ -23,6 +28,11 @@ class Tools {
 	}
 
 
+	/**
+	 * Returns plain text of json error
+	 * @param $error
+	 * @return string
+	 */
 	static public function json_error($error) {
 
 		switch ($error) {
@@ -104,6 +114,11 @@ class Tools {
 
 	}
 
+	/**
+	 * Removes file extension and converts _ to spaces
+	 * @param string $in
+	 * @return string
+	 */
 	static public function filename_to_text($in = '') {
 
 		$out = $in;
@@ -125,8 +140,8 @@ class Tools {
 	/**
 	 * Redirecting to another page
 	 * @param $url
-	 * @param bool $permanent
-	 * @param bool $rand
+	 * @param bool $permanent - default false: temporary redirect, true: 301 Move Permanently
+	 * @param bool $rand - default false, true: add a random value to force no cache
 	 */
 	static public function redirect($url, $permanent = FALSE, $rand = FALSE) {
 
@@ -169,5 +184,74 @@ class Tools {
 
 	}
 
+
+	/**
+	 * Makes a url friendly string
+	 * This is the same function as js: chmp.urlformat in chmp/js/structure.js
+	 * @param string $input
+	 * @param bool $utf8 -
+	 * @return string
+	 */
+	static public function urlformat($input, $utf8 = FALSE) {
+
+		$output = strtolower($input);
+
+		$output = preg_replace('/\s/', '_', $output);
+
+		if ( $utf8 ) {
+
+			$output = preg_replace('/[^A-za-z0-9\s._,\-À-ʸ]/u', '', $output);
+
+		} else {
+
+			$output = preg_replace('/[åäæàáâãāăảȧǎȁąạḁẚầấẫẩằắẵẳǡǟǻậặǽǣ]/u', 'a', $output);
+			$output = preg_replace('/[ḃɓḅḇƀƃƅ]/u', 'b', $output);
+			$output = preg_replace('/[ćĉċčƈçḉ]/u', 'c', $output);
+			$output = preg_replace('/[ḋɗḍḏḑḓďđƌȡ]/u', 'd', $output);
+			$output = preg_replace('/[èéêẽēĕėëẻěȅȇẹȩęḙḛềếễểḕḗệḝǝɛ]/u', 'e', $output);
+			$output = preg_replace('/[ḟƒ]/u', 'f', $output);
+			$output = preg_replace('/[ǵĝḡğġǧɠģǥ]/u', 'g', $output);
+			$output = preg_replace('/[ĥḣḧȟƕḥḩḫẖħ]/u', 'h', $output);
+			$output = preg_replace('/[ìíîĩīĭıïỉǐịȉȋḭɨḯ]/u', 'i', $output);
+			$output = preg_replace('/[ĵǰ]/u', 'j', $output);
+			$output = preg_replace('/[ḱǩḵƙḳķ]/u', 'k', $output);
+			$output = preg_replace('/[ĺḻḷļḽľŀłƚḹȴ]/u', 'l', $output);
+			$output = preg_replace('/[ḿṁṃɯ]/u', 'm', $output);
+			$output = preg_replace('/[ǹńñṅňŋɲṇņṋṉŉƞȵ]/u', 'n', $output);
+			$output = preg_replace('/[òóôõōŏȯöỏőǒȍȏơǫọɵøồốỗổȱȫȭṍṏṑṓờớỡởợǭộǿɔ]/u', 'o', $output);
+			$output = preg_replace('/[ṕṗƥ]/u', 'p', $output);
+			$output = preg_replace('/[ŕṙřȑȓṛŗṟṝ]/u', 'r', $output);
+			$output = preg_replace('/[śŝṡšṣșşṥṧṩſẛ]/u', 's', $output);
+			$output = preg_replace('/[ß]/u', 'ss', $output);
+			$output = preg_replace('/[ṫẗťƭʈƫṭțţṱṯŧȶ]/u', 't', $output);
+			$output = preg_replace('/[ùúûũūŭüủůűǔȕȗưụṳųṷṵṹṻǜǘǖǚừứữửự]/u', 'u', $output);
+			$output = preg_replace('/[ṽṿ]/u', 'v', $output);
+			$output = preg_replace('/[ẁẃŵẇẅẘẉ]/u', 'w', $output);
+			$output = preg_replace('/[ẋẍ]/u', 'x', $output);
+			$output = preg_replace('/[ỳýŷȳẏÿỷẙƴỵ]/u', 'y', $output);
+			$output = preg_replace('/[źẑżžȥẓẕƶ]/u', 'z', $output);
+			//ligatures
+			$output = preg_replace('/[ĳ]/u', 'ij', $output);
+			$output = preg_replace('/[ﬀ]/u', 'ff', $output);
+			$output = preg_replace('/[ﬁ]/u', 'fi', $output);
+			$output = preg_replace('/[ﬂ]/u', 'ff', $output);
+			$output = preg_replace('/[ﬃ]/u', 'ffi', $output);
+			$output = preg_replace('/[ﬄ]/u', 'ffl', $output);
+			$output = preg_replace('/[œ]/u', 'oe', $output);
+			$output = preg_replace('/[ĳ]/u', 'ij', $output);
+
+			// remove everything else
+			$output = preg_replace('/[^A-Za-z0-9\s._,\-]/', '', $output);
+
+
+		}
+
+		while ( strpos($output, '__') !== FALSE ) {
+			$output = str_replace('__', '_', $output);
+		}
+
+		return $output;
+
+	}
 
 }

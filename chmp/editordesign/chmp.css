@@ -128,6 +128,10 @@
 	cursor: pointer;
 }
 
+.chmp-submit-inactive {
+	opacity: 0.5;
+}
+
 .chmp-button {
 	background: #767676;
 }
@@ -315,7 +319,6 @@
 .chmp-input-expand {
 	position: absolute;
 	z-index: 2147483639;
-	background: #080;
 	height: 24px;
 	-webkit-box-shadow: inset 0 -1px rgba(0, 0, 0, .75);
 	-moz-box-shadow: inset 0 -1px rgba(0, 0, 0, .75);
@@ -323,8 +326,9 @@
 	cursor: pointer;
 	border-radius: 0px 3px 3px 0px;
 	top: 0;
-	left: 0px;
-
+	left: 3px; /*Fixes the shadow bottom left*/
+	background: #080;
+	
 	/*border-left: 1px solid #000;*/
 	-webkit-transition: 0.3s ease-in-out;
 	-moz-transition: 0.3s ease-in-out;
@@ -539,6 +543,22 @@ Drag and drop modules
 	cursor: pointer;
 	font-weight: bold;
 }
+
+.chmp-logout {
+	background: url(chmpsprites.png) no-repeat 0 -288px;
+	background-size: 32px 1000px;
+	width: 16px;
+	height: 32px;
+	cursor: pointer;
+	margin: 9px 0 0 0;
+}
+
+/*
+Wait cursor
+*/
+html.chmp-waiting,
+html.chmp-waiting * { cursor: wait !important; }
+
 
 /**
 * Copied from :

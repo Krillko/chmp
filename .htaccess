@@ -1,3 +1,12 @@
+# Test value for setup, tells setupscript that htaccess is working
+# This can be removed once setup is complete
+SetEnv CHMP_CMS_ACTIVE On
+
+# disable the ability to download the database
+<FilesMatch "\.(sqlite3|db|sqlite)$">
+	Deny from all
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
 
     #Tell PHP that the mod_rewrite module is ENABLED.
@@ -6,11 +15,17 @@
     SetEnv HTTP_MOD_REWRITE On
 
     RewriteEngine on
-
-	RewriteRule	^chmp/([0-9]+)/?$		index.php?chmp=on&page_id=$1&%{QUERY_STRING}	[L]
-
 	# [NC] = case-insensitive
     # [L] = do not process more rules if this is matched
+	RewriteRule	^chmp/([0-9]+)/?$		index.php?chmp=on&page_id=$1&%{QUERY_STRING}	[L]
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+ #[OR]
+#RewriteCond $1 ^chmp($|/)
+RewriteRule ^(.*)$ index.php/$1 [L]
+
 
 
 </IfModule>

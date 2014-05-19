@@ -9,6 +9,7 @@
 chmp.is_saving = false; // if we are currently trying to send data from page
 chmp.is_on_timer = false; // if we are waiting to send
 
+if (chmp.edit) {
 /*
  * This is zenpen editor from zenpen.io
  * by Tim Holman (@twholman)
@@ -285,12 +286,12 @@ var chmp_zen_editor = (function () {
 
 	function onBoldClick() {
 		document.execCommand('bold', false);
-		chmp.autosave_start(false);
+		chmp.autosave_start(false, false);
 	}
 
 	function onItalicClick() {
 		document.execCommand('italic', false);
-		chmp.autosave_start(false);
+		chmp.autosave_start(false, false);
 	}
 
 	function onQuoteClick() {
@@ -304,7 +305,7 @@ var chmp_zen_editor = (function () {
 			document.execCommand('formatBlock', false, 'blockquote');
 		}
 
-		chmp.autosave_start(false);
+		chmp.autosave_start(false, false);
 
 	}
 
@@ -365,7 +366,7 @@ var chmp_zen_editor = (function () {
 		currentNodeList = findNodes(window.getSelection().focusNode);
 		updateBubbleStates();
 
-		chmp.autosave_start(false);
+		chmp.autosave_start(false, false);
 
 	}
 
@@ -421,13 +422,52 @@ var chmp_zen_editor = (function () {
 })();
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - end zenpen editor
 
+}
+
+chmp.wait_icon = function () {
+
+	$('html').addClass('chmp-waiting');
+
+};
+
 
 /**
- *  set savetimer
+ * Logout
+ */
+chmp.confirm_logout = function() {
+
+	var logout, confirmtext;
+
+	confirmtext = 'Really logout?';
+	if (chmp.edit) {
+		confirmtext += '\n\n(Your changes will be autosaved)';
+	}
+
+	logout = confirm(confirmtext);
+
+	if (logout) {
+
+		chmp.wait_icon();
+
+		if (chmp.edit) {
+			chmp.autosave(false, true);
+
+		}
+
+
+	}
+
+
+};
+
+
+/**
+ *  Saving - set savetimer
  *  To prevent too many saves, we set a 1 sec delay before saving
  * @param {bool} [publish=false]
  */
-chmp.autosave_start = function (publish) {
+chmp.autosave_start = function (publish, logout) {
+	logout = logout || false;
 	publish = publish || false;
 
 
@@ -436,7 +476,7 @@ chmp.autosave_start = function (publish) {
 	}
 	chmp.is_on_timer = true;
 	chmp.autosavetimer = setTimeout(function () {
-		chmp.read_dom(true, publish)
+		chmp.read_dom(true, publish, logout);
 	}, 1000);
 };
 
@@ -444,9 +484,10 @@ chmp.autosave_start = function (publish) {
  * Saving
  * @param {bool} [publish=false]
  */
-chmp.autosave = function (publish) {
+chmp.autosave = function (publish, logout) {
+	logout = logout || false;
 	publish = publish || false;
-	chmp.read_dom(true, false);
+	chmp.read_dom(true, publish, logout);
 };
 
 
@@ -459,7 +500,8 @@ chmp.autosave = function (publish) {
  * @param {bool} [send_save=false]
  * @param {bool} [publish=false]
  */
-chmp.read_dom = function (send_save, publish) {
+chmp.read_dom = function (send_save, publish, logout) {
+	logout = logout || false;
 	publish = publish || false;
 	send_save = send_save || false;
 
@@ -470,7 +512,7 @@ chmp.read_dom = function (send_save, publish) {
 	// check if we already are trying to save, and wait to start again
 	if ( chmp.is_saving ) {
 
-		chmp.autosave_start(publish);
+		chmp.autosave_start(publish, logout);
 
 	} else {
 
@@ -594,13 +636,14 @@ chmp.read_dom = function (send_save, publish) {
 				       cache: false
 			       })
 				.done(function (data) {
+				          console.log("Save succsesful");
 					      $("#chmp-save-animation").fadeOut(1000);
 					      chmp.is_saving = false;
 					      chmp.is_on_timer = false;
 
 					      if ( publish ) {
-
-						      window.location.href = 'index.php?page=' + chmp.pageinfo.page_id + '&chmp-edit=0&do=publish&rand=' + Math.random();
+							  console.log("Publish");
+						      window.location.href = chmp.path + 'chmp/'+chmp.pageinfo.page_id+'/?do=publish&rand=' + Math.random();
 
 					      }
 
@@ -669,7 +712,7 @@ chmp.change_img = function (image_tuid, original_img_id, new_img_id, output_w, o
 	$('.chmp-featherlight-close').trigger('click');
 
 	// saves
-	chmp.read_dom(true, false);
+	chmp.read_dom(true, false, false);
 };
 
 /**
@@ -724,7 +767,7 @@ chmp.add_new_module_insert = function (content_uid, design) {
 	$("#chmp-edit-contentarea-" + content_uid).append(design);
 
 	// saves
-	chmp.read_dom(true, false);
+	chmp.read_dom(true, false, false);
 };
 
 /**
@@ -736,7 +779,7 @@ chmp.remove_module = function (uid) {
 		$(this).parent('li').remove();
 	});
 
-	chmp.autosave_start(false);
+	chmp.autosave_start(false, false);
 };
 
 
@@ -746,7 +789,7 @@ $(document).ready(function () {
 
 	console.log("hello world - i'm editor");
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - extend jquery attr();
+	// extend jquery attr();
 	// from this answer http://stackoverflow.com/a/14645827
 	(function (old) {
 		$.fn.attr = function () {
@@ -771,8 +814,9 @@ $(document).ready(function () {
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - triggers
 
-	/** When clicking an image a dialog box appears
-	 * with options to change image or change alt text
+if (chmp.edit) {
+	/**
+	 * When clicking an image a dialog box appears with options to change image or change alt text
 	 */
 	$(document).on('click', '.chmp-editable-img', function () {
 
@@ -833,6 +877,9 @@ $(document).ready(function () {
 		$(this).parent().remove();
 	});
 
+	/**
+	 * Opens image editor
+	 */
 	$(document).on('click', '.chmp-open-imgedit', function () {
 		var imgvars = $(this).attr('data-chmp-imgvars');
 
@@ -854,18 +901,20 @@ $(document).ready(function () {
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - adding and changing modules
 
+	/**
+	 * Add new module
+	 */
 	$(document).on('click', '.chmp-add-module-to', function () {
-
 		var content_uid = $(this).attr('data-chmp-add-module-to'),
 			new_module = $("#chmp-add-new-module-" + content_uid).val();
 
 		chmp.add_new_module(content_uid, new_module);
-
-
 	});
 
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - dragable modules
+	/**
+	 * Dragable modules
+	 */
 	$(".chmp-move-modules").sortable({
 		                                 handle:      '.chmp-dragicon',
 		                                 placeholder: "chmp-droptarget",
@@ -873,7 +922,7 @@ $(document).ready(function () {
 			                                 ui.placeholder.height(ui.item.height());
 		                                 },
 		                                 update:      function () {
-			                                 chmp.autosave_start(false);
+			                                 chmp.autosave_start(false, false);
 		                                 }
 
 	                                 });
@@ -900,20 +949,29 @@ $(document).ready(function () {
 
 	// save changes
 	$(document).on('keyup', '[contenteditable]', function () {
-		chmp.autosave_start(false);
+		chmp.autosave_start(false, false);
 	});
 
-	// publish
+	/**
+	 * publish
+	 */
 	$(document).on('click', '#chmp-do-publish', function () {
-
-
-		chmp.autosave_start(true);
+		chmp.wait_icon();
+		chmp.autosave(true, false);
 	});
 
+} // end if chmp.edit
+
+	/**
+	 * logout
+	 */
+	$(document).on('click', '#chmp-logout', function() {
+		chmp.confirm_logout();
+	});
 
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - test
 	$("#test-read").click(function () {
-		chmp.read_dom(false, false);
+		chmp.read_dom(false, false, false);
 	});
 
 

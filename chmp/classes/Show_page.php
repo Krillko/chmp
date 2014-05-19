@@ -5,7 +5,7 @@
  */
 class Show_page {
 
-	private $html_output, $edit, $login, $baseurl;
+	private $html_output, $edit, $login, $baseurl, $page_id;
 
 	function __construct($edit, $login, $baseurl) {
 		$this->edit    = $edit;
@@ -26,6 +26,7 @@ class Show_page {
 	 * @param int $page_id
 	 */
 	public function load_page($page_id) {
+		$this->page_id = $page_id;
 
 		/* Get content
 			Reads content from chmp/content/[pagenumber].json and makes an array
@@ -74,6 +75,7 @@ class Show_page {
 		}
 
 		// - - - - - - - - - - - - - - - - - - - - Builds the contentarea
+
 
 		foreach ( $html->find('content') as $contentarea ) {
 
@@ -158,21 +160,23 @@ class Show_page {
 
 		if ( $this->login or $this->edit ) {
 
-			$add_scripts .= '<script type="text/javascript" src="chmp/js/loggedin.js"></script>';
+			$add_scripts .= '<script type="text/javascript" src="chmp/js/loggedin.js"></script>
+			<script type="text/javascript" src="chmp/js/editor.js"></script>';
 
-			if ( $this->edit ) {
+			//if ( $this->edit ) {
 
 				$add_scripts_settings .= 'chmp.pageinfo = ' . json_encode($pageinfo) . ';';
 
 				$uri_parts = explode('?', $_SERVER[ 'REQUEST_URI' ], 2);
 
-				$add_scripts_settings .= 'chmp.path = "http://' . $_SERVER[ 'HTTP_HOST' ] . $uri_parts[ 0 ] . '"';
+				$add_scripts_settings .= 'chmp.path = "'.$this->baseurl.'";';
+
+				$add_scripts_settings .= 'chmp.edit = '.($this->edit ? 'true':'false').';';
 
 				// TODO: Move so that jquery ui, and jquery only loads if needed
-				$add_scripts .= '
-				<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-				<script type="text/javascript" src="chmp/js/editor.js"></script>';
-			}
+				$add_scripts .= '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+				';
+			//}
 
 			$add_scripts .= '<script type="text/javascript" src="chmp/js/featherlight.min.js"></script>';
 
@@ -182,6 +186,11 @@ class Show_page {
 
 
 		}
+
+		if ( $this->edit ) {
+
+		}
+
 
 		$add_scripts_settings .= '</script>';
 
@@ -291,8 +300,8 @@ class Show_page {
 				<div class="chmp chmp-nav-onoff-holder">
 					<div class="chmp chmp-nav-onoff chmp-nav-onoff-' . ( $this->edit ? 'on' : 'off' ) . '">
 						<div class="chmp chmp-nav-onoff-inner">
-							<a href="?chmp-edit=1"><div class="chmp chmp-nav-onoff-btn chmp-nav-btn-on">ON</div></a>
-							<a href="?chmp-edit=0"><div class="chmp chmp-nav-onoff-btn chmp-nav-btn-off">OFF</div></a>
+							<a href="chmp/'.$this->page_id.'/?chmp-edit=1"><div class="chmp chmp-nav-onoff-btn chmp-nav-btn-on">ON</div></a>
+							<a href="chmp/'.$this->page_id.'/?chmp-edit=0"><div class="chmp chmp-nav-onoff-btn chmp-nav-btn-off">OFF</div></a>
 						</div>
 					</div>
 				</div>
@@ -321,14 +330,24 @@ class Show_page {
 
 
 			<div class="chmp chmp-nav-right">
+				<div class="chmp chmp-logout" id="chmp-logout"></div>
+
+			</div>
+
+
+			<div class="chmp chmp-nav-right">
 				<div class="chmp chmp-nav-part chmp-nav-part-btn">
 					<div class="chmp chmp-input-dynamic chmp-button"><p class="chmp-ico-settings chmp-ico-w-text"><span>SITE SETTINGS</span>
 					</p></div>
 
 
+
 				</div>
 
 			</div>
+
+
+
 
 
 		</div>
