@@ -36,11 +36,13 @@ $chmp_config[ 'language_on' ]  = true;
 $chmp_config[ 'languages' ] = array(
 	0 => array( 'name' => 'English',
 				'langcode' => 'en',
-				'url' => 'en'
+				'url' => 'en',
+				'flag' => 'gb'
 	),
 	1 => array( 'name' => 'Svenska',
 				'langcode' => 'sv',
-				'url' => 'se'
+				'url' => 'se',
+				'flag' => 'se'
 	)
 );
 

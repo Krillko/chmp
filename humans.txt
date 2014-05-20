@@ -69,3 +69,6 @@ hi@dbushell.com
 https://github.com/dbushell/Nestable
 
 Ajax load icon from http://ajaxload.info
+
+Flag icons in admin by Jonathan Allen
+http://365icon.com/icon-styles/ethnic/classic2/
