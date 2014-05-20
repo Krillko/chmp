@@ -27,17 +27,27 @@ $session = new Session('../');
 
 if ($session->is_loggedin()) {
 
-	$structure = new Read_structure($db);
+	require_once( 'classes/Read_structure.php' ); // model, keeps the structure of the site
+	$structure = new Read_structure( $db, '' );
 	$structure->set_lang($_POST['lang']);
 
 	$test = 1;
 
+	/*
+	 * Posted arrays:
+	 * $_POST['active'] - contains the order from nestable.js
+	 * $_POST['structure'] - flat array with additional info, name|skip|hide etc
+	 * $_POST['trash'] - pages to be trashed, also from nestable.js
+	 * $_POST['current_structure'] - currently not used in php
+	 * */
+
 	if (is_array($_POST['structure'])) {
 
-
+		$structure->save_structure($_POST['active'] , $_POST[ 'structure' ], $_POST[ 'trash' ]);
 
 	}
 
+	echo 'ok';
 
 } else {
 

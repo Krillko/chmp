@@ -285,6 +285,7 @@ chmp.show_reminder = function() {
  */
 chmp.set_current_structure = function (findchildren, father) {
 
+
 	for (var i in findchildren) {
 		chmp.current_structure[findchildren[i].id] = {};
 		chmp.current_structure[findchildren[i].id].father = father;
@@ -307,13 +308,12 @@ chmp.set_current_structure = function (findchildren, father) {
 
 /**
  * Saves the structure
- * After save we may force a reload, since the id of new pages aren't finalized until saved
+ * After save we may force a reload
  */
 chmp.save_struct  = function() {
 	var send_result = {};
 
 	if (chmp.changes_to_save) {
-		console.log("start save");
 		$("#struct_reminder").html('<img src="chmp/editordesign/ajax-loader.gif">');
 
 			send_result.active = $('#chmp_structure').nestable('serialize');
@@ -324,7 +324,6 @@ chmp.save_struct  = function() {
 
 			send_result.lang =  chmp.lang;
 
-			console.log(send_result);
 
 		$.ajax({
 			       type:  "POST",
@@ -334,7 +333,9 @@ chmp.save_struct  = function() {
 		       })
 			.done(function (data) {
 							if (data == 'reload') {
-			                  location.reload(true);
+								window.onbeforeunload = null; // turns of reminder
+				                location.reload(true); // reloads page
+
 							} else if (data == 'ok') {
 
 								$("#struct_reminder").html('Last saved '+date('H:i:s')).delay(6000).fadeOut();
@@ -743,7 +744,7 @@ chmp.add_page = function (copy_of) {
 			              '		<div class="chmp-struct-title chmp-struct-unpublished">' +
 			              '			<div class="chmp-struct-icon"></div>' +
 			              '			<div class="chmp-struct-text">'+page_name+'</div>' +
-			              '			<div class="chmp-struct-skip"></div>' +
+			              '			<div class="chmp-struct-skip-icon"></div>' +
 			              '		</div>' +
 			            //  '		<div class="chmp-struct-goto"><a href="javascript:;">Show</a></div>' +
 			              '	</div>' +

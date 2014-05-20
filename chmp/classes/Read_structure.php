@@ -13,18 +13,21 @@ class Read_structure {
 	 */
 	private $db;
 
-	private $page_id = NULL, $lang;
+	private $page_id = NULL, $lang, $structure_array, $structure_array_flat, $file_list_json, $file_list_template, $path;
 
 	/**
 	 * @param $db \SQLite3
 	 * @param null $page_id
+	 * @param string $path
 	 */
-	function __construct($db, $page_id = NULL) {
+	function __construct($db, $page_id = NULL, $path = '') {
 		if ( !is_null($page_id) ) {
 			$this->page_id = $page_id;
 		}
 
+
 		$this->db = $db;
+		$this->path = $path;
 	}
 
 	/**
@@ -34,6 +37,36 @@ class Read_structure {
 	public function set_lang($lang) {
 		$this->lang = $lang;
 	}
+
+
+	/**
+	 * Set language from page_id
+	 * @param int $page_id
+	 * @return int|false
+	 */
+	public function set_lang_from_page_id($page_id) {
+		$sql = "SELECT lang FROM structure WHERE page_id = ".intval($page_id);
+
+		$result = $this->db->querySingle($sql);
+
+		if ($result !== FALSE) {
+			$this->lang = $result;
+			return $result;
+		} else {
+			return false;
+		}
+
+	}
+
+
+	/**
+	 * Returns language id
+	 * @return int
+	 */
+	public function get_lang() {
+		return $this->lang;
+	}
+
 
 	/**
 	 * Publish a page.
@@ -245,38 +278,58 @@ class Read_structure {
 
 	/**
 	 * Save the structure - Recursive
-	 * @param array $in_array
+	 * @param array $active
+	 * @param array $structure
+	 * @param array $trash
 	 * @param int $father
 	 * @param int $depth
+	 * @param int|null $lang
 	 */
-	public function save_structure($in_array, $father = 0, $depth = 0) {
+	public function save_structure($active = array(), $structure = array(), $trash = array(), $father = 0, $depth = 0, $lang = NULL) {
 
-		foreach ($in_array as $key => $value) {
+		if (is_null($lang)) {
+			$lang = $this->lang;
+		}
+
+		$sort = 1;
+
+		foreach ($active as $key => $value) {
+
+			$id = $value['id'];
 
 			$sql = "UPDATE structure SET
-						preliminary = 0";
+						preliminary = 0,
+						lang = ".intval($lang).",
+						father = ".intval($father).",
+						sort = ".intval($sort);
 
 			// Name
-			$name = $_POST['structure'][$value['id']]['name'];
+			$name = $structure[$id]['name'];
 			$name = (trim($name) != '' ?  SQLite3::escapeString(trim($name)):'untitled' );
 			$sql .= ", name = '".$name."'";
 
 			// Skip
-			$sql .= ", skip = ".($_POST['structure'][$value['id']]['skip'] ? 1:0);
+			$sql .= ", skip = ".($structure[$id] == 'true' ? 1:0);
 
 			// Hidden
-			$sql .= ", hidden = ".($_POST['structure'][$value['id']]['hidden'] ? 1:0);
+			$sql .= ", hidden = ".($structure[$id] == 'true' ? 1:0);
 
 			// URL
 
 
+			// Where
+
+			$sql .= " WHERE page_id =".$id;
+
+			$test = 1;
 
 			$this->db->query($sql);
 
 			if (is_array($value['children'])) {
-				$this->save_structure($value['children'], $value['id'], $depth+1);
+				$this->save_structure($value[ 'children' ], $structure, $trash, $id, $depth + 1, $lang);
 			}
 
+			$sort++;
 
 		}
 
@@ -335,6 +388,137 @@ class Read_structure {
 		}
 
 	}
+
+	/**
+	 * Makes an array with the structure
+	 * @param bool $flat
+	 * @return array
+	 */
+	public function get_structure($flat = false) {
+
+		// reads json files to see what pages are changed
+		if (!is_array($this->file_list_json)) {
+			$this->make_file_list_json();
+		}
+
+
+		// makes the structure if it's not built already
+		if (!is_array($this->structure_array)) {
+			$this->make_structure();
+		}
+
+		// return nested or flat structure
+		if (!$flat) {
+			return $this->structure_array;
+		} else {
+			return $this->structure_array_flat;
+		}
+
+	}
+
+
+	/**
+	 * Makes an array of the .json files in /content
+	 */
+	private function make_file_list_json() {
+		$output = array();
+		foreach (new DirectoryIterator($this->path.'content') as $fileInfo) {
+			if ($fileInfo->getExtension() == 'json') {
+				$output[] = $fileInfo->getFilename();
+			}
+		}
+		$this->file_list_json = $output;
+	}
+
+
+	/**
+	 * Returns an array of all template files
+	 * @return array
+	 */
+	public function get_file_list_template() {
+		if (!is_array($this->file_list_template)) {
+			$output = array();
+			foreach (new DirectoryIterator($this->path.'templates') as $fileInfo) {
+				if ($fileInfo->isFile()) {
+				$output[] = array(
+					'name' => Tools::filename_to_text($fileInfo->getFilename()),
+					'file' => $fileInfo->getFilename()
+
+				);
+				}
+			}
+			$this->file_list_template = $output;
+		}
+		return $this->file_list_template;
+	}
+
+
+	/**
+	 * Part of $this->get_structure()
+	 */
+	private function make_structure() {
+
+		function buildTree(array $elements, $parentId = 0) {
+			$branch = array();
+
+			foreach ($elements as $element) {
+				if ($element['father'] == $parentId) {
+					$children = buildTree($elements, $element['page_id']);
+					if ($children) {
+						$element['children'] = $children;
+					}
+					$branch[$element['page_id']] = $element;
+				}
+			}
+
+			return $branch;
+		}
+
+
+		$sql = "SELECT * FROM structure WHERE lang = ".intval($this->lang)." ORDER BY sort";
+
+		$results = $this->db->query($sql);
+		$rows = array();
+
+		$flat = array();
+
+		while ($result_row = $results->fetchArray()) {
+			$rows[] = array(
+				'page_id'=> $result_row['page_id'],
+				'father' => $result_row['father'],
+				'name'=> $result_row['name']
+			);
+
+			if ($result_row['published']) {
+				if (in_array($result_row['page_id'].'_edit.json', $this->file_list_json)) {
+					$status = 'edited';
+				} else {
+					$status = 'published';
+				}
+
+			} else {
+				$status = 'unpublished';
+			}
+
+
+			$flat[$result_row['page_id']] = array(
+
+				'name' => $result_row['name'],
+				'status' => $status,
+				'hidden' => ($result_row['hidden'] ? true:false),
+				'skip' => ($result_row['skip'] ? true:false)
+
+			);
+
+		}
+
+
+		$this->structure_array =  buildTree($rows);
+		$this->structure_array_flat = $flat;
+
+	}
+
+
 
 
 }

@@ -3,26 +3,32 @@
 
 class Show_navigation {
 
-	public $nav_in, $currentpage, $templatefile, $lang, $structure;
+	/**
+	 * @var \Read_structure
+	 */
+	private $structure;
 
-	function __construct($content) {
+	public $nav_in, $currentpage, $templatefile, $lang;
 
-		$this->templatefile = $content->get('templatefile');
-		$this->lang         = $content->get('lang');
-		$this->structure    = $content->get('structure');
+	/**
+	 * @param $content \Read_content
+	 * @param $structure \Read_structure
+	 */
+	function __construct($content, $structure) {
 
-		$stucturefile = 'chmp/content/structure_' . $this->structure . '.json';
+		if ($content !== null) {
+			$this->templatefile = $content->get('templatefile');
+			$this->lang         = $content->get('lang');
 
-		$structure_raw = file_get_contents($stucturefile);
-		$this->nav_in  = @json_decode($structure_raw, TRUE);
-
-		if ( $data === null
-			&& json_last_error() !== JSON_ERROR_NONE
-		) {
-			die( "<h2>Error</h2><p>Unable to read chmp/templates/" . $stucturefile . "</p>
-			<code>" . Tools::json_error(json_last_error()) . "</code>" );
 		}
 
+		$this->structure    = $structure;
+
+		// TODO: replace here to database driven
+
+		$this->nav_in = $structure->get_structure();
+
+		$test = 1;
 
 	}
 
@@ -54,7 +60,7 @@ class Show_navigation {
 	 * TODO: id on a
 	 * TODO: option to wrap text in a with span etc
 	 *
-	 * @param string $type 'ul' returns <ul>, 'sitemapxml'
+	 * @param string $type 'ul' returns <ul>, 'sitemapxml', 'structure'
 	 * @param array $attr attibutes from <navigation> tag
 	 * @return string formatted html or xml
 	 */
@@ -69,8 +75,8 @@ class Show_navigation {
 			}
 		}
 
-		if ( is_array($this->nav_in[ 'nav' ]) ) {
-			$out = $this->build_recursive($type, $this->nav_in[ 'nav' ], $attr);
+		if ( is_array($this->nav_in) ) {
+			$out = $this->build_recursive($type, $this->nav_in, $attr);
 
 		}
 
@@ -78,7 +84,15 @@ class Show_navigation {
 	}
 
 
-	// recursivly build the navigation
+	/**
+	 * recursivly build the navigation
+	 * @param string $type
+	 * @param array $in
+	 * @param array $attr
+	 * @param int $depth
+	 * @param bool $parentActive
+	 * @return string
+	 */
 	private function build_recursive($type = 'ul', $in = array(), $attr = array(), $depth = 1, $parentActive = FALSE) {
 		$out = '';
 
@@ -88,6 +102,10 @@ class Show_navigation {
 					. ( $attr[ 'data-chmp-id' ] != '' ? ' id="' . $attr[ 'data-chmp-id' ] . '"' : '' )
 					. ( $attr[ 'data-chmp-class' ] != '' ? ' class="' . $attr[ 'data-chmp-class' ] . '"' : '' )
 					. '>';
+			} else if ($type == 'structure') {
+
+				$out = PHP_EOL . '<ol class="dd-list" id="chmp_structure_active">';
+
 			}
 
 			foreach ( $in as $in_key => $in_value ) {
@@ -97,6 +115,23 @@ class Show_navigation {
 				if ( $type == 'sitemapxml' ) {
 					// TODO: change this to real url later
 					$out .= ' <url><loc>http://www.example.com/?page=' . $in_key . '</loc></url>';
+
+				} elseif ( $type == 'structure' ) {
+
+					$out .= '<li class="dd-item dd3-item" data-id="'.$in_key.'">
+								<div class="dd-handle dd3-handle"></div>
+								<div class="dd3-content">
+									<!-- title -->
+									<div class="chmp-struct-title">
+										<div class="chmp-struct-icon"></div>
+										<div class="chmp-struct-text"></div>
+										<div class="chmp-struct-skip-icon"></div>
+									</div>
+									<div class="chmp-struct-goto"><a href="javascript:;">Show</a></div>
+									<!-- end title -->
+
+								</div>';
+
 
 				} else { // default: ul
 					// check if this is the active page
@@ -142,19 +177,22 @@ class Show_navigation {
 				}
 
 				// finds the children of this page
-				if ( is_array($in_value[ 'children' ]) and ( !isset( $attr[ 'data-chmp-end' ] ) or $depth < $attr[ 'data-chmp-end' ] ) ) {
+				if ( is_array($in_value[ 'children' ])
+					and ( !isset( $attr[ 'data-chmp-end' ] ) or $depth < $attr[ 'data-chmp-end' ] or $type == 'structure') ) {
 					$out .= $this->build_recursive($type, $in_value[ 'children' ], $attr, $depth + 1, $parentActive);
 
 				}
 
 				// close tag
-				if ( $type == 'ul' ) {
+				if ( $type == 'ul' or $type == 'structure' ) {
 					$out .= '</li>' . PHP_EOL;
 				}
 			}
 			// close tag
 			if ( $type == 'ul' ) {
 				$out .= '</ul>';
+			} else if ($type == 'structure') {
+				$out .= '</ol>';
 			}
 		}
 
@@ -162,7 +200,13 @@ class Show_navigation {
 
 	}
 
-	// find all child of a page and see if any of them are the active page
+	/**
+	 * find all child of a page and see if any of them are the active page
+	 * @param array $in
+	 * @param string $find
+	 * @param bool $recursive
+	 * @return bool
+	 */
 	private function find_page_recursive($in = array(), $find = 'active', $recursive = TRUE) {
 
 		if ( $this->currentpage === NULL or !isset( $this->currentpage ) ) {

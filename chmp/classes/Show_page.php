@@ -5,12 +5,18 @@
  */
 class Show_page {
 
+	/**
+	 * @var \Read_structure
+	 */
+	private $structure;
+
 	private $html_output, $edit, $login, $baseurl, $page_id;
 
-	function __construct($edit, $login, $baseurl) {
+	function __construct($edit, $login, $baseurl, $structure) {
 		$this->edit    = $edit;
 		$this->login   = $login;
 		$this->baseurl = $baseurl;
+		$this->structure = $structure;
 	}
 
 	/**
@@ -45,8 +51,10 @@ class Show_page {
 
 		$template = new Read_tempate( $html );
 
+
+
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - gets navigation
-		$nav = new Show_navigation( $content );
+		$nav = new Show_navigation( $content, $this->structure);
 		$nav->set_currentpage($page_id);
 
 		$show_content = new Show_content( $template, $content );
@@ -77,6 +85,9 @@ class Show_page {
 		// - - - - - - - - - - - - - - - - - - - - Builds the contentarea
 
 
+		/**
+		 * @var $contentarea \simple_html_dom
+		 */
 		foreach ( $html->find('content') as $contentarea ) {
 
 			// converts chmp contentarea to a div
@@ -160,6 +171,8 @@ class Show_page {
 
 		if ( $this->login or $this->edit ) {
 
+			$editor_ui = new Editor_ui();
+
 			$add_scripts .= '<script type="text/javascript" src="chmp/js/loggedin.js"></script>
 			<script type="text/javascript" src="chmp/js/editor.js"></script>';
 
@@ -182,7 +195,11 @@ class Show_page {
 
 			$body = $html->find("body", 0);
 
-			$body->outertext = $body->makeup() . '<!-- chmp is logged in -->' . ( $this->edit ? $this->editor_textoptions() : '' ) . $this->editor_nav() . $body->innertext . '</body>';
+			$body->outertext = $body->makeup() . '<!-- chmp is logged in -->'
+
+				.( $this->edit ? $this->editor_textoptions() : '' )
+				. $editor_ui->editor_nav('surf', false, $this->edit, $this->page_id)
+				. $body->innertext . '</body>';
 
 
 		}
@@ -275,24 +292,33 @@ class Show_page {
 
 	/**
 	 * Show navigation when logged into the editor
+	 * @param string $mode
+	 * @param bool $nofloat
 	 * @return string
 	 */
-	private function editor_nav() {
+	public function editor_nav($mode = '', $nofloat = FALSE) {
 
-		if ( Config::get('float_navigation') == FALSE ) {
+		if ( Config::get('float_navigation') == FALSE or $nofloat) {
+			$float = false;
+		} else {
+			$float = true;
+		}
+
+
+		if (!$float) {
 			$out = '<div class="chmp chmp-navigation-holder">';
-
 		} else {
 			$out .= '<div class="chmp chmp-nav-showhide-btn" id="chmp-nav-showhide"><p class="chmp chmp-ico-downarrow"></p></div>';
+
 		}
+
 
 		$out .= '
 	<div class="chmp chmp-navigation" id="chmp-nav">
 
-		<div class="chmp chmp-nav-edit chmp-nav-float">
+		<div class="chmp chmp-nav-edit'.( $float ? ' chmp-nav-float':'').'">
 
-
-			<div class="chmp chmp-nav-part chmp-nav-part-text">
+		<div class="chmp chmp-nav-part chmp-nav-part-text">
 				<p>EDIT:</p>
 			</div>
 
@@ -357,7 +383,7 @@ class Show_page {
 	<!-- end #chmp-nav -->
 ';
 
-		if ( Config::get('float_navigation') == FALSE ) {
+		if (!$float ) {
 			$out .= '</div>
 <!-- end chmp-navigation-holder -->';
 		}

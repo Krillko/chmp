@@ -47,11 +47,12 @@ require_once( 'chmp/classes/Show_navigation.php' );
 require_once( 'chmp/classes/Show_page.php' );
 require_once( 'chmp/classes/Error_log.php' );
 require_once( 'chmp/classes/Read_structure.php' ); // model, keeps the structure of the site
+require_once( 'chmp/classes/Editor_ui.php' );
 
 // starts error handling
 $error_log = new Error_log();
 
-$structure = new Read_structure( $db, $page_id );
+$structure = new Read_structure( $db, $page_id, 'chmp/' );
 
 if ( $session->is_loggedin() and $_GET[ 'do' ] == 'publish' ) {
 	if ( $structure->publish($page_id) ) {
@@ -62,6 +63,9 @@ if ( $session->is_loggedin() and $_GET[ 'do' ] == 'publish' ) {
 // figure out what page we are on
 if ( $_GET[ 'chmp' ] ) {
 	$page_id = $_GET[ 'page_id' ];
+	$lang = $structure->set_lang_from_page_id($page_id);
+	$session->set_lang($lang);
+
 } else {
 
 	$path = trim($_SERVER[ 'PATH_INFO' ]);
@@ -152,11 +156,15 @@ if ( $_GET[ 'chmp' ] ) {
 
 }
 
-$test = 1;
+$structure->set_lang($lang);
+
+
 // Builds a page and shows it
 $selflocation = 'http://' . $_SERVER[ 'HTTP_HOST' ] . str_ireplace('index.php', '', $_SERVER[ 'PHP_SELF' ]);
 
-$page = new Show_page( $session->is_edit(), $session->is_loggedin(), $selflocation );
+
+
+$page = new Show_page( $session->is_edit(), $session->is_loggedin(), $selflocation, $structure );
 $page->load_page($page_id);
 
 echo $page->show_page();

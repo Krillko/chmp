@@ -99,6 +99,9 @@ class Session {
 	}
 
 
+	/**
+	 * Removes login related session variables
+	 */
 	public function clear_session() {
 
 		$_SESSION[ $this->cookiename . '-login' ] = FALSE;
@@ -107,6 +110,38 @@ class Session {
 		unset( $_SESSION[ $this->cookiename . '-user' ] );
 		$_SESSION[ $this->cookiename . '-rightslevel' ] = 0;
 		unset( $_SESSION[ $this->cookiename . '-rightslevel' ] );
+
+	}
+
+	/**
+	 * Sets a session variable
+	 * @param string $var
+	 * @param string $val
+	 */
+	public function set($var, $val) {
+		$_SESSION[ $this->cookiename . '-' . $var ] = $val;
+	}
+
+	/**
+	 * Gets a session variable
+	 * @param string $var
+	 * @return mixed
+	 */
+	public function get($var) {
+		return $_SESSION[ $this->cookiename . '-' . $var ];
+	}
+
+
+	/**
+	 * Sets the lang session for admin
+	 * @param int|null $lang
+	 */
+	public function set_lang($lang = null) {
+		if (!is_int($lang)) {
+			$_SESSION[ $this->cookiename .'-lang'] = Config::get('language_main');
+		} else {
+			$_SESSION[ $this->cookiename .'-lang'] = $lang;
+		}
 
 	}
 
