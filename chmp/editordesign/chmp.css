@@ -455,14 +455,53 @@
 	min-height: 12px;
 }
 
+.chmp-nav-part-separator {
+	border-right: 1px solid #272727;
+	height: 36px;
+	margin: 0 20px 0 8px;
+}
+
+.chmp-ico-structure {
+	background: url(chmpsprites.png) no-repeat 0 -735px;
+	background-size: 32px 1000px;
+	min-width: 12px;
+	min-height: 12px;
+}
+.chmp-ico-files {
+	background: url(chmpsprites.png) no-repeat 0 -352px;
+	background-size: 32px 1000px;
+	min-width: 12px;
+	min-height: 12px;
+}
+.chmp-ico-users {
+	background: url(chmpsprites.png) no-repeat 0 -448px;
+	background-size: 32px 1000px;
+	min-width: 12px;
+	min-height: 12px;
+}
+
+.chmp-button-active {
+	background: #a4a4a4;
+	cursor: default !important;
+}
+
+
+
+
 /*
 Drag and drop modules
-*/
+
 
 .chmp-edit-module:hover {
 	outline: 1px dashed #46aa37;
 	position: relative;
 }
+
+.chmp-edit-module:hover .chmp-edit-module-btns {
+	display: block;
+}
+
+*/
 
 .chmp-edit-module-btns {
 	position: absolute;
@@ -480,8 +519,9 @@ Drag and drop modules
 	box-sizing: border-box;
 }
 
-.chmp-edit-module:hover .chmp-edit-module-btns {
-	display: block;
+.chmp-edit-module-hover {
+	outline: 1px dashed #46aa37;
+	position: relative;
 }
 
 .chmp-droptarget {

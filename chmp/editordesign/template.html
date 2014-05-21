@@ -267,7 +267,7 @@ div, a, span, td {
 }
 
 .chmp-ico-leftarrow {
-	background: url(chmpsprites.png) no-repeat 0 -128px;
+	background: url(chmpsprites.png) no-repeat 0 -127px;
 	background-size: 32px 1000px;
 	min-width: 10px;
 	min-height: 10px;
@@ -299,6 +299,39 @@ div, a, span, td {
 	background-size: 32px 1000px;
 	min-width: 12px;
 	min-height: 12px;
+}
+
+
+/* new 21 may */
+
+.chmp-nav-part-separator {
+	border-right: 1px solid #272727;
+	height: 36px;
+	margin: 0 20px 0 8px;
+}
+
+.chmp-ico-structure {
+	background: url(chmpsprites.png) no-repeat 0 -735px;
+	background-size: 32px 1000px;
+	min-width: 12px;
+	min-height: 12px;
+}
+.chmp-ico-files {
+	background: url(chmpsprites.png) no-repeat 0 -352px;
+	background-size: 32px 1000px;
+	min-width: 12px;
+	min-height: 12px;
+}
+.chmp-ico-users {
+	background: url(chmpsprites.png) no-repeat 0 -448px;
+	background-size: 32px 1000px;
+	min-width: 12px;
+	min-height: 12px;
+}
+
+.chmp-button-active {
+	background: #a4a4a4;
+	cursor: default !important;
 }
 
 
@@ -343,10 +376,11 @@ div, a, span, td {
 
 		<div class="chmp chmp-nav-edit chmp-nav-float">
 
-
+<!--
 			<div class="chmp chmp-nav-part chmp-nav-part-text">
 				<p>EDIT:</p>
 			</div>
+
 
 			<div class="chmp chmp-nav-part">
 				<div class="chmp chmp-nav-onoff-holder">
@@ -358,12 +392,31 @@ div, a, span, td {
 					</div>
 				</div>
 			</div>
+			-->
 
 
 			<div class="chmp chmp-nav-part chmp-nav-part-btn">
-				<div class="chmp chmp-input-dynamic chmp-button"><p>Change image</p></div>
+				<div class="chmp chmp-input-dynamic chmp-button"><p class="chmp-ico-leftarrow chmp-ico-w-text"><span>Back to site</span></p></div>
 			</div>
 
+
+			<div class="chmp chmp-nav-part chmp-nav-part-btn chmp-nav-part-separator"></div>
+
+
+			<div class="chmp chmp-nav-part chmp-nav-part-btn">
+				<div class="chmp chmp-input-dynamic chmp-button chmp-button-active"><p class="chmp-ico-structure chmp-ico-w-text"><span>Structure</span></p></div>
+			</div>
+
+			<div class="chmp chmp-nav-part chmp-nav-part-btn">
+				<div class="chmp chmp-input-dynamic chmp-button"><p class="chmp-ico-files chmp-ico-w-text"><span>Files</span></p></div>
+			</div>
+
+			<div class="chmp chmp-nav-part chmp-nav-part-btn">
+				<div class="chmp chmp-input-dynamic chmp-button"><p class="chmp-ico-users chmp-ico-w-text"><span>Users</span></p></div>
+			</div>
+
+
+			<!--
 
 			<div class="chmp chmp-nav-part chmp-nav-part-btn">
 				<div class="chmp chmp-button-expandable">
@@ -380,6 +433,8 @@ div, a, span, td {
 				<img src="save-animation.gif" alt="save-animation" width="26" height="17" class="chmp chmp-save-icon">
 			</div>
 
+
+			-->
 
 			<div class="chmp chmp-nav-right">
 				<div class="chmp chmp-nav-part chmp-nav-part-btn">
