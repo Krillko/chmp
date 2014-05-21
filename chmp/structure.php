@@ -92,7 +92,7 @@ if ($session->is_loggedin()) {
 </head>
 
 <body>
-'.$editor_ui->editor_nav('structure', true)
+'.$editor_ui->editor_nav('structure', TRUE, false, null, $session)
 
 .'<div id="admin" class="admin_bg">
 <div class="admin_content">
@@ -292,10 +292,12 @@ if ($session->is_loggedin()) {
 </div>
 <!-- /admin_content -->
 
-
+<div class="clear"></div>
 
 </div>
 <!-- /admin_bg -->
+
+
 
 </body>
 </html>';

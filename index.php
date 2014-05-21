@@ -164,7 +164,7 @@ $selflocation = 'http://' . $_SERVER[ 'HTTP_HOST' ] . str_ireplace('index.php', 
 
 
 
-$page = new Show_page( $session->is_edit(), $session->is_loggedin(), $selflocation, $structure );
+$page = new Show_page( $session->is_edit(), $session->is_loggedin(), $selflocation, $structure, $session );
 $page->load_page($page_id);
 
 echo $page->show_page();

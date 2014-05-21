@@ -10,13 +10,19 @@ class Show_page {
 	 */
 	private $structure;
 
+	/**
+	 * @var \Session
+	 */
+	private $session;
+
 	private $html_output, $edit, $login, $baseurl, $page_id;
 
-	function __construct($edit, $login, $baseurl, $structure) {
+	function __construct($edit, $login, $baseurl, $structure, $session) {
 		$this->edit    = $edit;
 		$this->login   = $login;
 		$this->baseurl = $baseurl;
 		$this->structure = $structure;
+		$this->session = $session;
 	}
 
 	/**
@@ -198,7 +204,7 @@ class Show_page {
 			$body->outertext = $body->makeup() . '<!-- chmp is logged in -->'
 
 				.( $this->edit ? $this->editor_textoptions() : '' )
-				. $editor_ui->editor_nav('surf', false, $this->edit, $this->page_id)
+				. $editor_ui->editor_nav('surf', FALSE, $this->edit, $this->page_id, $this->session)
 				. $body->innertext . '</body>';
 
 
@@ -290,107 +296,6 @@ class Show_page {
 	}
 
 
-	/**
-	 * Show navigation when logged into the editor
-	 * @param string $mode
-	 * @param bool $nofloat
-	 * @return string
-	 */
-	public function editor_nav($mode = '', $nofloat = FALSE) {
-
-		if ( Config::get('float_navigation') == FALSE or $nofloat) {
-			$float = false;
-		} else {
-			$float = true;
-		}
-
-
-		if (!$float) {
-			$out = '<div class="chmp chmp-navigation-holder">';
-		} else {
-			$out .= '<div class="chmp chmp-nav-showhide-btn" id="chmp-nav-showhide"><p class="chmp chmp-ico-downarrow"></p></div>';
-
-		}
-
-
-		$out .= '
-	<div class="chmp chmp-navigation" id="chmp-nav">
-
-		<div class="chmp chmp-nav-edit'.( $float ? ' chmp-nav-float':'').'">
-
-		<div class="chmp chmp-nav-part chmp-nav-part-text">
-				<p>EDIT:</p>
-			</div>
-
-			<div class="chmp chmp-nav-part">
-				<div class="chmp chmp-nav-onoff-holder">
-					<div class="chmp chmp-nav-onoff chmp-nav-onoff-' . ( $this->edit ? 'on' : 'off' ) . '">
-						<div class="chmp chmp-nav-onoff-inner">
-							<a href="chmp/'.$this->page_id.'/?chmp-edit=1"><div class="chmp chmp-nav-onoff-btn chmp-nav-btn-on">ON</div></a>
-							<a href="chmp/'.$this->page_id.'/?chmp-edit=0"><div class="chmp chmp-nav-onoff-btn chmp-nav-btn-off">OFF</div></a>
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-			<div class="chmp chmp-nav-part chmp-nav-part-btn">
-				<div class="chmp chmp-input-dynamic chmp-button"><p>Change image</p></div>
-			</div>
-
-
-			<div class="chmp chmp-nav-part chmp-nav-part-btn">
-				<div class="chmp chmp-button-expandable">
-					<div class="chmp chmp-input-expand-btn chmp-input-small chmp-submit chmp-do-expand"><p>Publish</p>
-					</div>
-					<div class="chmp chmp-input-expand"><p><a href="javascript:;"
-					                                          class="chmp chmp-input-cancel">CANCEL</a> &nbsp; <a
-							href="javascript:;" class="chmp chmp-input-confirm" id="chmp-do-publish">OK!</a></p></div>
-				</div>
-			</div>
-
-
-			<div class="chmp chmp-nav-part chmp-start-hidden" id="chmp-save-animation">
-				<img src="chmp/editordesign/save-animation.gif" alt="save-animation" width="26" height="17" class="chmp chmp-save-icon">
-			</div>
-
-
-			<div class="chmp chmp-nav-right">
-				<div class="chmp chmp-logout" id="chmp-logout"></div>
-
-			</div>
-
-
-			<div class="chmp chmp-nav-right">
-				<div class="chmp chmp-nav-part chmp-nav-part-btn">
-					<div class="chmp chmp-input-dynamic chmp-button"><p class="chmp-ico-settings chmp-ico-w-text"><span>SITE SETTINGS</span>
-					</p></div>
-
-
-
-				</div>
-
-			</div>
-
-
-
-
-
-		</div>
-		<!-- end .chmp-nav-edit -->
-
-	</div>
-	<!-- end #chmp-nav -->
-';
-
-		if (!$float ) {
-			$out .= '</div>
-<!-- end chmp-navigation-holder -->';
-		}
-
-		return ( $out );
-
-	}
 
 
 }
