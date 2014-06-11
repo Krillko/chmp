@@ -332,6 +332,9 @@ chmp.save_struct  = function() {
 					data:   send_result
 		       })
 			.done(function (data) {
+
+			                console.log(data);
+
 							if (data == 'reload') {
 								window.onbeforeunload = null; // turns of reminder
 				                location.reload(true); // reloads page
@@ -344,7 +347,7 @@ chmp.save_struct  = function() {
 								window.onbeforeunload = null;
 
 							} else {
-					           console.log(data);
+					           console.warn(data);
 
 			                }
 
@@ -727,13 +730,13 @@ chmp.add_page = function (copy_of) {
 	       })
 		.done(function (data) {
 
-		              console.log(data);
+
 
 		              data = parseInt(data,10);
 
 		              if (copy_of !== false) {
 
-			              page_name = chmp.structure[copy_of].name + 'Copy';
+			              page_name = chmp.structure[copy_of].name + ' copy';
 
 		              }
 

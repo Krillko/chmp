@@ -169,6 +169,9 @@ if ( $session->is_loggedin() ) {
 
 	http_response_code(200); // Ok
 
+	echo 'Writing to '.$saveto;
+
+
 } else {
 
 	http_response_code(401); // Unauthorized

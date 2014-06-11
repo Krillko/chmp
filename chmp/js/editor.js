@@ -205,27 +205,27 @@ var chmp_zen_editor = (function () {
 		// warrent a shim.
 
 		if ( hasNode(currentNodeList, 'B') ) {
-			boldButton.className = "chmp_zen_bold active"
+			boldButton.className = "chmp_zen_bold active";
 		} else {
-			boldButton.className = "chmp_zen_bold"
+			boldButton.className = "chmp_zen_bold";
 		}
 
 		if ( hasNode(currentNodeList, 'I') ) {
-			italicButton.className = "chmp_zen_italic active"
+			italicButton.className = "chmp_zen_italic active";
 		} else {
-			italicButton.className = "chmp_zen_italic"
+			italicButton.className = "chmp_zen_italic";
 		}
 
 		if ( hasNode(currentNodeList, 'BLOCKQUOTE') ) {
-			quoteButton.className = "chmp_zen_quote active"
+			quoteButton.className = "chmp_zen_quote active";
 		} else {
-			quoteButton.className = "chmp_zen_quote"
+			quoteButton.className = "chmp_zen_quote";
 		}
 
 		if ( hasNode(currentNodeList, 'A') ) {
-			urlButton.className = "chmp_zen_url chmp_zen_useicons active"
+			urlButton.className = "chmp_zen_url chmp_zen_useicons active";
 		} else {
-			urlButton.className = "chmp_zen_url chmp_zen_useicons"
+			urlButton.className = "chmp_zen_url chmp_zen_useicons";
 		}
 	}
 
@@ -240,7 +240,7 @@ var chmp_zen_editor = (function () {
 				textOptions.style.top = '-999px';
 				textOptions.style.left = '-999px';
 			}
-		}, 260)
+		}, 260);
 	}
 
 	function findNodes(element) {
@@ -265,11 +265,6 @@ var chmp_zen_editor = (function () {
 		return !!nodeList[ name ];
 	}
 
-	function saveState(event) {
-
-		localStorage[ 'header' ] = headerField.innerHTML;
-		localStorage[ 'content' ] = contentField.innerHTML;
-	}
 
 	/*
 	 function loadState() {
@@ -394,16 +389,7 @@ var chmp_zen_editor = (function () {
 		window.getSelection().addRange(lastSelection);
 	}
 
-	function getWordCount() {
-		console.log("wordcount");
-		var text = get_text(contentField);
 
-		if ( text === "" ) {
-			return 0
-		} else {
-			return text.split(/\s+/).length;
-		}
-	}
 
 	function onCompositionStart(event) {
 		composing = true;
@@ -414,10 +400,8 @@ var chmp_zen_editor = (function () {
 	}
 
 	return {
-		init:         init,
-		saveState:    saveState,
-		getWordCount: getWordCount
-	}
+		init:         init
+	};
 
 })();
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - end zenpen editor
@@ -464,7 +448,8 @@ chmp.confirm_logout = function() {
 /**
  *  Saving - set savetimer
  *  To prevent too many saves, we set a 1 sec delay before saving
- * @param {bool} [publish=false]
+ * @param {boolean} [publish=false]
+ * @param {boolean} [logout=false]
  */
 chmp.autosave_start = function (publish, logout) {
 	logout = logout || false;
@@ -482,7 +467,8 @@ chmp.autosave_start = function (publish, logout) {
 
 /**
  * Saving
- * @param {bool} [publish=false]
+ * @param {boolean} [publish=false]
+ * @param {boolean} [logout=false]
  */
 chmp.autosave = function (publish, logout) {
 	logout = logout || false;
@@ -497,8 +483,9 @@ chmp.autosave = function (publish, logout) {
  * please note, module_uid is unique in template, since you can have more then one module of the same design, it's not unique in content json
  * modules in content doesn't have a unique id, it's just an array
  *
- * @param {bool} [send_save=false]
- * @param {bool} [publish=false]
+ * @param {boolean} [send_save=false]
+ * @param {boolean} [publish=false]
+ * @param {boolean} [logout=false]
  */
 chmp.read_dom = function (send_save, publish, logout) {
 	logout = logout || false;
@@ -627,16 +614,23 @@ chmp.read_dom = function (send_save, publish, logout) {
 			}
 		});
 
+		//console.log(json);
+
 		// sending
 		if ( send_save ) {
 			$.ajax({
 				       type:  "POST",
-				       url:   chmp.path + 'chmp/ajax_savepage.php',
+				       url:   chmp.path + 'chmp/ajax_save_page.php',
 				       data:  json,
 				       cache: false
 			       })
 				.done(function (data) {
-				          console.log("Save succsesful");
+				          console.groupCollapsed("Save succsesful");
+
+				          console.log(data);
+
+				          console.groupEnd()
+
 					      $("#chmp-save-animation").fadeOut(1000);
 					      chmp.is_saving = false;
 					      chmp.is_on_timer = false;
@@ -675,12 +669,13 @@ chmp.read_dom = function (send_save, publish, logout) {
 
 /**
  * Replace the empty chr placeholder when saving
+ * TODO: the charcode should be selected from config
  * @param {string} input
  * @returns {string}
  */
 chmp.remove_empty_chr = function (input) {
-	var output = input.replace(String.fromCharCode(10002), '');
-	return output;
+	return  input.replace(String.fromCharCode(10002), '');
+
 };
 
 
@@ -743,12 +738,13 @@ chmp.add_new_module = function (content_uid, module_uid) {
 
 	$.ajax({
 		       type:  "POST",
-		       url:   chmp.path + 'chmp/ajax_getdesign.php',
+		       url:   chmp.path + 'chmp/ajax_get_design.php',
 		       data:  data,
 		       cache: false
 	       })
 		.done(function (data) {
 			      chmp.add_new_module_insert(content_uid, data);
+
 		      })
 		.fail(function (jqXHR, textStatus, e) {
 			      console.error("fail");
@@ -764,7 +760,15 @@ chmp.add_new_module = function (content_uid, module_uid) {
  * @param {string} design - html from template
  */
 chmp.add_new_module_insert = function (content_uid, design) {
+	console.groupCollapsed("add_new_module_insert");
+	console.log(design);
+	console.log("#chmp-edit-contentarea-" + content_uid);
+	console.groupEnd();
+
 	$("#chmp-edit-contentarea-" + content_uid).append(design);
+
+	// refresh sortable to include new item
+	$(".chmp-move-modules").sortable("refresh");
 
 	// saves
 	chmp.read_dom(true, false, false);
@@ -780,6 +784,48 @@ chmp.remove_module = function (uid) {
 	});
 
 	chmp.autosave_start(false, false);
+};
+
+
+/**
+ * Turn on module border and move button
+ * TODO: add change module here
+ * @param clicked_id
+ * @param [clicked_this]
+ * @returns {boolean}
+ */
+chmp.edit_module_border = function (clicked_id, clicked_this) {
+	var this_mod, this_uid;
+
+	if (typeof clicked_this === 'undefined') {
+		clicked_this = $('.chmp-edit-module[data-chmp-tuid="'+clicked_id+'"]');
+	}
+
+	if (clicked_id != chmp.current_edit_module) {
+
+
+		chmp.current_edit_module = clicked_id;
+
+		$('.chmp-edit-module-hover').each(function() {
+
+			this_mod = $(this);
+			this_uid = $(this_mod).attr('data-chmp-tuid');
+
+			if (this_uid != clicked_id) {
+				$(this_mod).removeClass('chmp-edit-module-hover').children('.chmp-edit-module-btns').hide();
+				$(this_mod).find('.chmp-powerTip-img').remove();
+			}
+
+		});
+
+		$(clicked_this).addClass('chmp-edit-module-hover').children('.chmp-edit-module-btns').show();
+
+		return true;
+
+	} else {
+		return false;
+	}
+
 };
 
 
@@ -818,43 +864,61 @@ if (chmp.edit) {
 	/**
 	 * When clicking an image a dialog box appears with options to change image or change alt text
 	 */
-	$(document).on('click', '.chmp-editable-img', function () {
+	$(document).on('click', '.chmp-editable-img', function (e) {
 
-		var chmp_title, chmp_imgvars = {}, parent = $(this).parent(), posY = $(parent).offset();
+		var chmp_title,
+			chmp_imgvars = {},
+			parent = $(this).parent(),
+			module = $(this).parents('.chmp-edit-module').attr('data-chmp-tuid'),
+			posY = $(parent).offset(),
+			stopping;
 
-		$(this).each(function () {
-			$.each(this.attributes, function () {
-				// this.attributes is not a plain object, but an array
-				// of attribute nodes, which contain both the name and value
-				if ( this.specified ) {
-					if ( this.name.substr(0, 10) == 'data-chmp-' ) {
-						//console.log(this.name + ": "+this.value);
-						chmp_imgvars[this.name] = this.value;
+
+
+		// check so we don't already have an editbox
+		if ($(parent).find('.chmp-powerTip-img').length === 0) {
+
+
+
+			$(this).each(function () {
+				$.each(this.attributes, function () {
+					// this.attributes is not a plain object, but an array
+					// of attribute nodes, which contain both the name and value
+					if ( this.specified ) {
+						if ( this.name.substr(0, 10) == 'data-chmp-' ) {
+							//console.log(this.name + ": "+this.value);
+							chmp_imgvars[this.name] = this.value;
+						}
+						if ( this.name == 'alt' || this.name == 'title' ) {
+							chmp_title = this.value;
+						}
 					}
-					if ( this.name == 'alt' || this.name == 'title' ) {
-						chmp_title = this.value;
-					}
-				}
+				});
 			});
-		});
 
-		// scroll to top of image
-		if ( posY.top < $("body").scrollTop() ) {
-			window.scrollTo($("body").scrollLeft(), posY.top);
+			// scroll to top of image
+			if ( posY.top < $("body").scrollTop() ) {
+				window.scrollTo($("body").scrollLeft(), posY.top);
+			}
+
+
+			var chmp_imagebox = '<div class="chmp-powerTip chmp-powerTip-img">' +
+				'<div class="chmp chmp-close"></div>' +
+				'<p class="chmp chmp-tooltip-headline chmp-tooltip-element">Edit image</p>' +
+				'<div class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit chmp-open-imgedit" data-chmp-imgvars="' + $.param(chmp_imgvars) + '&title=' + chmp_title + '"><p>Change image</p></div>' +
+				'<p class="chmp chmp-tooltip-body chmp-tooltip-element">Alt/title text:</p>' +
+				'<p class="chmp chmp-tooltip-body"><input type="text" class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-input-text" id="chmp-imgtext-' + chmp_imgvars['data-chmp-tuid'] + '" value="' + chmp_title + '"></p>' +
+				'<div class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit chmp-imgtext-save" data-chmp-imgtext-save="' + chmp_imgvars['data-chmp-tuid'] + '"><p>Save text</p></div>' +
+				'</div>';
+
+
+			$(parent).prepend(chmp_imagebox);
+
 		}
 
+		chmp.edit_module_border(module);
 
-		var chmp_imagebox = '<div class="chmp-powerTip chmp-powerTip-img">' +
-			'<div class="chmp chmp-close"></div>' +
-			'<p class="chmp chmp-tooltip-headline chmp-tooltip-element">Edit image</p>' +
-			'<div class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit chmp-open-imgedit" data-chmp-imgvars="' + $.param(chmp_imgvars) + '&title=' + chmp_title + '"><p>Change image</p></div>' +
-			'<p class="chmp chmp-tooltip-body chmp-tooltip-element">Alt/title text:</p>' +
-			'<p class="chmp chmp-tooltip-body"><input type="text" class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-input-text" id="chmp-imgtext-' + chmp_imgvars['data-chmp-tuid'] + '" value="' + chmp_title + '"></p>' +
-			'<div class="chmp chmp-tooltip-element chmp-input chmp-input-small chmp-submit chmp-imgtext-save" data-chmp-imgtext-save="' + chmp_imgvars['data-chmp-tuid'] + '"><p>Save text</p></div>' +
-			'</div>';
-
-
-		$(parent).prepend(chmp_imagebox);
+		e.stopPropagation();
 
 
 	});
@@ -873,8 +937,10 @@ if (chmp.edit) {
 
 
 	// closes image edit-box
-	$(document).on('click', '.chmp-close', function () {
+	$(document).on('click', '.chmp-close', function (e) {
 		$(this).parent().remove();
+
+		e.stopPropagation();
 	});
 
 	/**
@@ -959,6 +1025,31 @@ if (chmp.edit) {
 		chmp.wait_icon();
 		chmp.autosave(true, false);
 	});
+
+
+	$(document).on('click', '.chmp-edit-module', function(e) {
+
+		var clicked_this = $(this),
+			clicked_id = $(clicked_this).attr('data-chmp-tuid'),
+			changed = chmp.edit_module_border(clicked_id, clicked_this);
+
+		if (changed) {
+			e.stopPropagation();
+		}
+
+
+	});
+
+	$(document).click(function() {
+
+		$('.chmp-edit-module-hover').each(function() {
+			$(this).removeClass('chmp-edit-module-hover').children('.chmp-edit-module-btns').hide();
+		});
+
+
+	});
+
+
 
 } // end if chmp.edit
 

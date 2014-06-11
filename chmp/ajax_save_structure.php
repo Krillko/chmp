@@ -31,7 +31,7 @@ if ($session->is_loggedin()) {
 	$structure = new Read_structure( $db, '' );
 	$structure->set_lang($_POST['lang']);
 
-	$test = 1;
+	$reload = false;
 
 	/*
 	 * Posted arrays:
@@ -43,11 +43,24 @@ if ($session->is_loggedin()) {
 
 	if (is_array($_POST['structure'])) {
 
-		$structure->save_structure($_POST['active'] , $_POST[ 'structure' ], $_POST[ 'trash' ]);
+		$update_result = $structure->save_structure($_POST['active'] , $_POST[ 'structure' ], $_POST[ 'trash' ]);
+
 
 	}
 
-	echo 'ok';
+	$test = 1;
+
+	if ($update_result['delete'] > 0 or $update_result['new'] > 0) {
+		$reload = true;
+	}
+
+	//header("HTTP/1.1 200 OK");
+	if ($reload) {
+		echo 'reload';
+		//echo 'ok';
+	} else {
+		echo 'ok';
+	}
 
 } else {
 

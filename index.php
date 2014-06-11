@@ -54,11 +54,6 @@ $error_log = new Error_log();
 
 $structure = new Read_structure( $db, $page_id, 'chmp/' );
 
-if ( $session->is_loggedin() and $_GET[ 'do' ] == 'publish' ) {
-	if ( $structure->publish($page_id) ) {
-		Tools::redirect('?published=done', FALSE, FALSE);
-	}
-}
 
 // figure out what page we are on
 if ( $_GET[ 'chmp' ] ) {
@@ -157,6 +152,18 @@ if ( $_GET[ 'chmp' ] ) {
 }
 
 $structure->set_lang($lang);
+
+
+// publish a page and redirects to finished
+if ( $session->is_loggedin() and $_GET[ 'do' ] == 'publish' ) {
+	if ( $structure->publish($page_id) ) {
+		Tools::redirect('?published=done', FALSE, FALSE);
+	} else {
+		die('Couldn\'t publish');
+
+	}
+}
+
 
 
 // Builds a page and shows it

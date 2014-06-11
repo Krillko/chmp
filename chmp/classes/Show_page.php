@@ -43,7 +43,7 @@ class Show_page {
 		/* Get content
 			Reads content from chmp/content/[pagenumber].json and makes an array
 		*/
-		$content = new Read_content( $page_id, $this->edit, NULL );
+		$content = new Read_content( $page_id, $this->edit, NULL , $this->structure);
 
 		$pageinfo = $content->get_info();
 
@@ -60,7 +60,7 @@ class Show_page {
 
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - gets navigation
-		$nav = new Show_navigation( $content, $this->structure);
+		$nav = new Show_navigation( $content, $this->structure, $this->session );
 		$nav->set_currentpage($page_id);
 
 		$show_content = new Show_content( $template, $content );
@@ -184,6 +184,12 @@ class Show_page {
 
 			//if ( $this->edit ) {
 
+				// sets missing values to default values
+				if ($pageinfo['templatefile'] == '') {
+					$pageinfo['templatefile'] = $content->get('templatefile');
+				}
+
+
 				$add_scripts_settings .= 'chmp.pageinfo = ' . json_encode($pageinfo) . ';';
 
 				$uri_parts = explode('?', $_SERVER[ 'REQUEST_URI' ], 2);
@@ -204,7 +210,7 @@ class Show_page {
 			$body->outertext = $body->makeup() . '<!-- chmp is logged in -->'
 
 				.( $this->edit ? $this->editor_textoptions() : '' )
-				. $editor_ui->editor_nav('surf', FALSE, $this->edit, $this->page_id, $this->session)
+				. $editor_ui->editor_nav('surf', FALSE, $this->edit, $this->page_id, $this->session, NULL)
 				. $body->innertext . '</body>';
 
 

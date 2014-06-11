@@ -10,7 +10,16 @@ class Read_content {
 	public $content;
 	private $version;
 
-	function __construct($page_id, $edit, $version) {
+	/**
+	 * @var \Read_structure
+	 */
+	private $structure;
+
+	function __construct($page_id, $edit, $version, $structure = null) {
+
+		if (!is_null($structure)) {
+			$this->structure = $structure;
+		}
 
 		// if there is no file for this page, a new one is created
 		if ( !is_file('chmp/content/' . $page_id . '.json') ) {
@@ -37,10 +46,13 @@ class Read_content {
 	// gets something specific from info
 	public function get($var) {
 		if ( $var == 'templatefile' ) {
-			if ( isset( $this->content[ 'info' ][ 'templatefile' ] ) ) {
+
+			$test = 1;
+
+			if (  $this->content[ 'info' ][ 'templatefile' ] != '' ) {
 				return ( $this->content[ 'info' ][ 'templatefile' ] );
 			} else {
-				// TODO: Parse template folder and return first
+				return $this->structure->get_first_template();
 			}
 
 		} else {

@@ -146,10 +146,10 @@ class Tools {
 	static public function redirect($url, $permanent = FALSE, $rand = FALSE) {
 
 		if ( $rand ) {
-			if ( strpos($url, '?') === 0 ) {
-				$url .= '?rnd=' . rand(1, 99999);
+			if ( strpos($url, '?') === false ) {
+				$url .= '?rnd=' . uniqid();
 			} else {
-				$url .= '&rnd=' . rand(1, 99999);
+				$url .= '&rnd=' . uniqid();
 			}
 		}
 

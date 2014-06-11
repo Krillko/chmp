@@ -1,5 +1,5 @@
 <?php
-
+//TODO: IMPORTANT, replace test_lang with session based lang
 $test_lang = 0;
 
 mb_internal_encoding("UTF-8");
@@ -19,18 +19,15 @@ Config::init('../');
 date_default_timezone_set(Config::get('timezone'));
 
 require_once( 'classes/Session.php' );
-$session = new Session('../');
+$session = new Session( '../' );
+$session->set_lang();
 
-
-
-if ($session->is_loggedin()) {
+if ( $session->is_loggedin() ) {
 
 	require_once( 'classes/Editor_ui.php' );
 	$editor_ui = new Editor_ui();
 
 	require_once( 'classes/Read_structure.php' ); // model, keeps the structure of the site
-
-
 
 	$structure = new Read_structure( $db, '' );
 
@@ -38,8 +35,7 @@ if ($session->is_loggedin()) {
 
 	require_once( 'classes/Show_navigation.php' );
 
-	$navigation = new Show_navigation(null, $structure);
-
+	$navigation = new Show_navigation( NULL, $structure, $session );
 
 	$out = '<!DOCTYPE html>
 <html>
@@ -73,10 +69,10 @@ if ($session->is_loggedin()) {
 
 	// settings
 	var chmp = chmp || [];
-	chmp.structure = '.json_encode($structure->get_structure(true), JSON_FORCE_OBJECT).';
-	chmp.templates = '.json_encode($structure->get_file_list_template(), JSON_FORCE_OBJECT).';
+	chmp.structure = ' . json_encode($structure->get_structure(TRUE), JSON_FORCE_OBJECT) . ';
+	chmp.templates = ' . json_encode($structure->get_file_list_template(), JSON_FORCE_OBJECT) . ';
 	chmp.rich_urls = false; // allows utf8 in urls
-	chmp.lang = '.$test_lang.';
+	chmp.lang = ' . $test_lang . ';
 
 
 </script>
@@ -92,9 +88,9 @@ if ($session->is_loggedin()) {
 </head>
 
 <body>
-'.$editor_ui->editor_nav('structure', TRUE, false, null, $session)
+' . $editor_ui->editor_nav('structure', TRUE, FALSE, NULL, $session, $structure)
 
-.'<div id="admin" class="admin_bg">
+		. '<div id="admin" class="admin_bg">
 <div class="admin_content">
 <div class="admin_headline">
 	<h1>Structure</h1>
@@ -124,8 +120,18 @@ if ($session->is_loggedin()) {
 <div class="admin_left">
 	<!-- nestable -->
 
-	<div class="dd" id="chmp_structure">
-		'.$navigation->get_nav('structure').'
+	<div class="dd" id="chmp_structure">';
+
+	if ( $structure->count_pages() > 0 ) {
+		$out .= $navigation->get_nav('structure');
+	} else {
+
+		$out .= '<ol class="dd-list" id="chmp_structure_active"></ol>';
+
+
+	}
+
+	$out .= '
 	</div>
 
 
@@ -140,7 +146,7 @@ if ($session->is_loggedin()) {
 	<div id="struct_delete_headline">&nbsp;</div>
 
 	<div class="dd" id="chmp_structure_trash">
-		<div class="dd-empty">Drag a page here to delete it</div>
+		<div class="dd-empty"><div class="chmp_ico_trash"></div>Drag a page here to delete it</div>
 	</div>
 
 </div>
@@ -167,9 +173,9 @@ if ($session->is_loggedin()) {
 					<div class="form_cell form_rigth">
 						<select id="struct_template">
 							';
-						foreach ($structure->get_file_list_template() as $temlate_row) {
-							$out .= '<option value="'.$temlate_row['file'].'">'.$temlate_row['name'].'</option>';
-						}
+	foreach ( $structure->get_file_list_template() as $temlate_row ) {
+		$out .= '<option value="' . $temlate_row[ 'file' ] . '">' . $temlate_row[ 'name' ] . '</option>';
+	}
 	$out .= '
 						</select>
 					</div>
@@ -307,8 +313,8 @@ if ($session->is_loggedin()) {
 
 } else {
 
-		//TODO: redirect to login
-		header('HTTP/1.0 403 Forbidden');
-		echo('HTTP/1.0 403 Forbidden');
+	//TODO: redirect to login
+	header('HTTP/1.0 403 Forbidden');
+	echo( 'HTTP/1.0 403 Forbidden' );
 
-	}
+}

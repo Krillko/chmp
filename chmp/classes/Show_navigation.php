@@ -8,19 +8,30 @@ class Show_navigation {
 	 */
 	private $structure;
 
+	/**
+	 * @var \Session
+	 */
+	private $session;
+
 	public $nav_in, $currentpage, $templatefile, $lang;
 
 	/**
 	 * @param $content \Read_content
 	 * @param $structure \Read_structure
+	 * @param null $session
 	 */
-	function __construct($content, $structure) {
+	function __construct($content, $structure, $session = NULL) {
 
-		if ($content !== null) {
+		if (!is_null($content) ) {
 			$this->templatefile = $content->get('templatefile');
 			$this->lang         = $content->get('lang');
 
 		}
+
+		if (!is_null($session)) {
+			$this->session = $session;
+		}
+
 
 		$this->structure    = $structure;
 
@@ -30,6 +41,7 @@ class Show_navigation {
 
 		$test = 1;
 
+		$this->session = $session;
 	}
 
 	public function set_currentpage($page_id) {
@@ -109,83 +121,86 @@ class Show_navigation {
 			}
 
 			foreach ( $in as $in_key => $in_value ) {
-				$class       = '';
-				$notSelected = TRUE;
+				if ( $in_value['published'] or $this->session->is_loggedin() ) {
+					$class       = '';
+					$notSelected = TRUE;
 
-				if ( $type == 'sitemapxml' ) {
-					// TODO: change this to real url later
-					$out .= ' <url><loc>http://www.example.com/?page=' . $in_key . '</loc></url>';
+					if ( $type == 'sitemapxml' ) {
+						// TODO: change this to real url later
+						$out .= ' <url><loc>http://www.example.com/?page=' . $in_key . '</loc></url>';
 
-				} elseif ( $type == 'structure' ) {
+					} elseif ( $type == 'structure' ) {
 
-					$out .= '<li class="dd-item dd3-item" data-id="'.$in_key.'">
-								<div class="dd-handle dd3-handle"></div>
-								<div class="dd3-content">
-									<!-- title -->
-									<div class="chmp-struct-title">
-										<div class="chmp-struct-icon"></div>
-										<div class="chmp-struct-text"></div>
-										<div class="chmp-struct-skip-icon"></div>
-									</div>
-									<div class="chmp-struct-goto"><a href="javascript:;">Show</a></div>
-									<!-- end title -->
+						$out .= '<li class="dd-item dd3-item" data-id="' . $in_key . '">
+									<div class="dd-handle dd3-handle"></div>
+									<div class="dd3-content">
+										<!-- title -->
+										<div class="chmp-struct-title">
+											<div class="chmp-struct-icon"></div>
+											<div class="chmp-struct-text"></div>
+											<div class="chmp-struct-skip-icon"></div>
+										</div>
+										<div class="chmp-struct-goto"><a href="chmp/' . $in_key . '">Show</a></div>
+										<!-- end title -->
 
-								</div>';
+									</div>';
 
 
-				} else { // default: ul
-					// check if this is the active page
-					if ( $in_key == $this->currentpage and $attr[ 'data-chmp-active' ] != '' ) {
-						$class .= $attr[ 'data-chmp-active' ] . ',';
-						$notSelected  = FALSE;
-						$parentActive = TRUE;
-					}
-
-					// check if this or any of the children to this page is the active page
-					if ( $this->find_page_recursive($in_value[ 'children' ]) or $in_key == $this->currentpage ) {
-						if ( $attr[ 'data-chmp-selected' ] != '' ) {
-							$class .= $attr[ 'data-chmp-selected' ] . ',';
+					} else { // default: ul
+						// check if this is the active page
+						if ( $in_key == $this->currentpage and $attr[ 'data-chmp-active' ] != '' ) {
+							$class .= $attr[ 'data-chmp-active' ] . ',';
+							$notSelected  = FALSE;
+							$parentActive = TRUE;
 						}
-						$notSelected = FALSE;
-					}
 
-					// check if any of the children is active
-					if ( $this->find_page_recursive($in_value[ 'children' ]) ) {
-						if ( $attr[ 'data-chmp-parents' ] != '' ) {
-							$class .= $attr[ 'data-chmp-parents' ] . ',';
+						// check if this or any of the children to this page is the active page
+						if ( $this->find_page_recursive($in_value[ 'children' ]) or $in_key == $this->currentpage ) {
+							if ( $attr[ 'data-chmp-selected' ] != '' ) {
+								$class .= $attr[ 'data-chmp-selected' ] . ',';
+							}
+							$notSelected = FALSE;
 						}
-						$notSelected = FALSE;
-					}
 
-					// check if this is the direct parent of active
-					if ( $this->find_page_recursive($in_value[ 'children' ], 'active', FALSE) ) {
-						if ( $attr[ 'data-chmp-parent' ] != '' ) {
-							$class .= $attr[ 'data-chmp-parent' ] . ',';
+						// check if any of the children is active
+						if ( $this->find_page_recursive($in_value[ 'children' ]) ) {
+							if ( $attr[ 'data-chmp-parents' ] != '' ) {
+								$class .= $attr[ 'data-chmp-parents' ] . ',';
+							}
+							$notSelected = FALSE;
 						}
+
+						// check if this is the direct parent of active
+						if ( $this->find_page_recursive($in_value[ 'children' ], 'active', FALSE) ) {
+							if ( $attr[ 'data-chmp-parent' ] != '' ) {
+								$class .= $attr[ 'data-chmp-parent' ] . ',';
+							}
+						}
+						// adds notselected
+						if ( $attr[ 'data-chmp-notselected' ] != '' and $notSelected ) {
+							$class .= $attr[ 'data-chmp-notselected' ] . ',';
+						}
+
+						// adds a class depending on depth
+						if ( $attr[ 'data-chmp-depth' ] != '' ) {
+							$class .= $attr[ 'data-chmp-depth' ] . $depth . ',';
+						}
+
+						$out .= PHP_EOL . '<li ' . ( $class != '' ? 'class="' . substr($class, 0, -1) . '"' : '' ) . '><a href="' . $this->view_prettyUrl($in_key) . '">' . $in_value[ 'name' ] . '</a>';
 					}
-					// adds notselected
-					if ( $attr[ 'data-chmp-notselected' ] != '' and $notSelected ) {
-						$class .= $attr[ 'data-chmp-notselected' ] . ',';
+
+					// finds the children of this page
+					if ( is_array($in_value[ 'children' ])
+						and ( !isset( $attr[ 'data-chmp-end' ] ) or $depth < $attr[ 'data-chmp-end' ] or $type == 'structure' )
+					) {
+						$out .= $this->build_recursive($type, $in_value[ 'children' ], $attr, $depth + 1, $parentActive);
+
 					}
 
-					// adds a class depending on depth
-					if ( $attr[ 'data-chmp-depth' ] != '' ) {
-						$class .= $attr[ 'data-chmp-depth' ] . $depth . ',';
+					// close tag
+					if ( $type == 'ul' or $type == 'structure' ) {
+						$out .= '</li>' . PHP_EOL;
 					}
-
-					$out .= PHP_EOL . '<li ' . ( $class != '' ? 'class="' . substr($class, 0, -1) . '"' : '' ) . '><a href="' . $this->view_prettyUrl($in_key) . '">' . $in_value[ 'name' ] . '</a>';
-				}
-
-				// finds the children of this page
-				if ( is_array($in_value[ 'children' ])
-					and ( !isset( $attr[ 'data-chmp-end' ] ) or $depth < $attr[ 'data-chmp-end' ] or $type == 'structure') ) {
-					$out .= $this->build_recursive($type, $in_value[ 'children' ], $attr, $depth + 1, $parentActive);
-
-				}
-
-				// close tag
-				if ( $type == 'ul' or $type == 'structure' ) {
-					$out .= '</li>' . PHP_EOL;
 				}
 			}
 			// close tag
