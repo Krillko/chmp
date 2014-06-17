@@ -63,6 +63,20 @@ class Read_tempate {
 							}
 						}
 
+						// get plugins
+
+						foreach ( $module_row->find('plugin') as $plugin_row) {
+
+							$thisPluginName = $plugin_row->getAttribute('data-chmp-plugin');
+
+							$this->template[ $content_uid ][ 'modules' ][ $moduleUid ]['plugin'][$thisPluginName] =  $plugin_row->getAllAttributes();
+
+
+
+						}
+
+
+
 					}
 				}
 
