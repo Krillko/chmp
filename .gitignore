@@ -1,6 +1,9 @@
 # phpstorm keeps settings in idea
 .idea
 
+# api keys
+chmp/apikeys.php
+
 # templates are project specific
 chmp/templates/*
 !chmp/templates/example.html

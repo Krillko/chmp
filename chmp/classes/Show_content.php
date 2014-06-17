@@ -10,6 +10,11 @@ class Show_content {
 
 	public $edit;
 
+	/**
+	 * @var \Read_tempate
+	 */
+	private $template;
+
 	function __construct($template, $content) {
 		$this->template = $template;
 		$this->content  = $content;
@@ -78,12 +83,14 @@ class Show_content {
 		$module_attr          = $this->template->get_module_elements($contentarea_uid, $uid, 'attr');
 		$module_elements_text = $this->template->get_module_elements($contentarea_uid, $uid, 'text');
 		$module_elements_img  = $this->template->get_module_elements($contentarea_uid, $uid, 'img');
+		$module_elements_plugin = $this->template->get_module_elements($contentarea_uid, $uid, 'plugin');
 
 		$module = new simple_html_dom();
 		$module->load($module_design);
 
 		$test = 1;
 
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - texts
 		foreach ( $module_elements_text as $module_elements_row ) {
 			foreach ( $module->find('*[data-chmp-name*=' . $module_elements_row[ 'data-chmp-name' ] . ']') as $thisTag ) {
 				// checking so that the template doesnt have texts and images named the same
@@ -114,6 +121,7 @@ class Show_content {
 			}
 		}
 
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - images
 		foreach ( $module_elements_img as $module_elements_row ) {
 			foreach ( $module->find('*[data-chmp-name*=' . $module_elements_row[ 'data-chmp-name' ] . ']') as $thisTag ) {
 				// checking so that the template doesnt have texts and images named the same
@@ -124,6 +132,40 @@ class Show_content {
 				}
 			}
 		}
+
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - plugins
+
+		foreach ( $module_elements_plugin as $module_elements_row) {
+
+			foreach ( $module->find('*[data-chmp-plugin=' . $module_elements_row[ 'data-chmp-plugin' ] . ']') as $thisTag ) {
+
+				if (is_file('chmp/plugins/chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ].'.php')) {
+					$chmp_plugin_vars = $module_elements_row;
+					$chmp_plugin_content = $thisTag->innertext;
+
+					include('chmp/plugins/chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ].'.php');
+
+					if ($module_elements_row[ 'data-chmp-plugin-type' ] == 'simple') {
+						$thisTag->outertext = $chmp_output_plugin;
+					} else {
+						$plugin_uid = uniqid('plugin');
+						$showplugin[$plugin_uid] = new $module_elements_row[ 'data-chmp-plugin' ]($chmp_plugin_vars , $chmp_plugin_content);
+
+						$thisTag->outertext = $showplugin[$plugin_uid]->show_plugin();
+
+					}
+
+
+					$test = 1;
+
+				}
+
+			}
+
+
+
+		}
+
 
 		if ( $this->edit ) {
 			$module_attr = $this->template->get_module_elements($contentarea_uid, $uid, 'attr');
