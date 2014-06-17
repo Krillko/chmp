@@ -56,8 +56,23 @@ $structure = new Read_structure( $db, $page_id, 'chmp/' );
 
 
 // figure out what page we are on
+// if $_GET[ 'chmp' ] we are inside editor, otherwise on published pages
 if ( $_GET[ 'chmp' ] ) {
+
+	// we can only be here if logged in
+	// TODO: redirect this to the published page if exists
+	if (!$session->is_loggedin()) {
+		Tools::redirect('../index.php', false, true);
+	}
+
 	$page_id = $_GET[ 'page_id' ];
+
+	// check that the page exists in structure
+	// otherwise, redirect to structure
+	if (!$structure->page_exists($page_id)) {
+		Tools::redirect('../structure.php', false, true);
+	}
+
 	$lang = $structure->set_lang_from_page_id($page_id);
 	$session->set_lang($lang);
 
@@ -150,6 +165,7 @@ if ( $_GET[ 'chmp' ] ) {
 
 
 }
+
 
 $structure->set_lang($lang);
 

@@ -181,7 +181,12 @@ if ( $session->is_loggedin() ) {
 					</div>
 				</div>
 
+
+
 			</div>
+
+			<div class="chmp_form_wide">(changing name or template will change both published page and unpublished page)</div>
+
 			<!-- /chmp_form -->
 
 		</div>
@@ -314,7 +319,6 @@ if ( $session->is_loggedin() ) {
 } else {
 
 	//TODO: redirect to login
-	header('HTTP/1.0 403 Forbidden');
-	echo( 'HTTP/1.0 403 Forbidden' );
+	Tools::redirect('index.php');
 
 }

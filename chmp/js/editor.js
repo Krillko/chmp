@@ -619,41 +619,41 @@ chmp.read_dom = function (send_save, publish, logout) {
 		// sending
 		if ( send_save ) {
 			$.ajax({
-				       type:  "POST",
-				       url:   chmp.path + 'chmp/ajax_save_page.php',
-				       data:  json,
-				       cache: false
-			       })
+					   type:  "POST",
+					   url:   chmp.path + 'chmp/ajax_save_page.php',
+					   data:  json,
+					   cache: false
+				   })
 				.done(function (data) {
-				          console.groupCollapsed("Save succsesful");
+						  console.groupCollapsed("Save succsesful");
 
-				          console.log(data);
+						  console.log(data);
 
-				          console.groupEnd()
+						  console.groupEnd();
 
-					      $("#chmp-save-animation").fadeOut(1000);
-					      chmp.is_saving = false;
-					      chmp.is_on_timer = false;
+						  $("#chmp-save-animation").fadeOut(1000);
+						  chmp.is_saving = false;
+						  chmp.is_on_timer = false;
 
-					      if ( publish ) {
+						  if ( publish ) {
 							  console.log("Publish");
-						      window.location.href = chmp.path + 'chmp/'+chmp.pageinfo.page_id+'/?do=publish&rand=' + Math.random();
+							  window.location.href = chmp.path + 'chmp/'+chmp.pageinfo.page_id+'/?do=publish&rand=' + Math.random();
 
-					      }
+						  }
 
-				      })
+					  })
 				.fail(function (jqXHR, textStatus, e) {
-					      console.error("fail");
-					      console.groupCollapsed("Error report");
-					      console.log(jqXHR);
-					      console.log(textStatus);
-					      console.log(e);
-					      console.groupEnd();
-					      chmp.ajax_errorhandler(jqXHR.status);
-					      $("#chmp-save-animation").fadeOut(1000);
-					      chmp.is_saving = false;
-					      chmp.is_on_timer = false;
-				      })
+						  console.error("fail");
+						  console.groupCollapsed("Error report");
+						  console.log(jqXHR);
+						  console.log(textStatus);
+						  console.log(e);
+						  console.groupEnd();
+						  chmp.ajax_errorhandler(jqXHR.status);
+						  $("#chmp-save-animation").fadeOut(1000);
+						  chmp.is_saving = false;
+						  chmp.is_on_timer = false;
+					  })
 			;
 
 		} else {
@@ -737,20 +737,20 @@ chmp.add_new_module = function (content_uid, module_uid) {
 	};
 
 	$.ajax({
-		       type:  "POST",
-		       url:   chmp.path + 'chmp/ajax_get_design.php',
-		       data:  data,
-		       cache: false
-	       })
+			   type:  "POST",
+			   url:   chmp.path + 'chmp/ajax_get_design.php',
+			   data:  data,
+			   cache: false
+		   })
 		.done(function (data) {
-			      chmp.add_new_module_insert(content_uid, data);
+				  chmp.add_new_module_insert(content_uid, data);
 
-		      })
+			  })
 		.fail(function (jqXHR, textStatus, e) {
-			      console.error("fail");
-			      console.log(jqXHR);
-			      chmp.ajax_errorhandler(jqXHR.status);
-		      })
+				  console.error("fail");
+				  console.log(jqXHR);
+				  chmp.ajax_errorhandler(jqXHR.status);
+			  })
 	;
 };
 
@@ -982,16 +982,16 @@ if (chmp.edit) {
 	 * Dragable modules
 	 */
 	$(".chmp-move-modules").sortable({
-		                                 handle:      '.chmp-dragicon',
-		                                 placeholder: "chmp-droptarget",
-		                                 start:       function (e, ui) {
-			                                 ui.placeholder.height(ui.item.height());
-		                                 },
-		                                 update:      function () {
-			                                 chmp.autosave_start(false, false);
-		                                 }
+										 handle:      '.chmp-dragicon',
+										 placeholder: "chmp-droptarget",
+										 start:       function (e, ui) {
+											 ui.placeholder.height(ui.item.height());
+										 },
+										 update:      function () {
+											 chmp.autosave_start(false, false);
+										 }
 
-	                                 });
+									 });
 
 
 	// prevents pasting stylized html into contenteditable

@@ -210,12 +210,62 @@ class Read_structure {
 
 		$row = $this->db->querySingle($sql);
 
-		if ( $row === FALSE ) {
+		if ( $row === null ) {
 			return FALSE;
 		} else {
 			return $row;
 		}
 	}
+
+
+	/**
+	 * Check if a page exist in structure
+	 * @param int $page_id
+	 * @return bool
+	 */
+	public function page_exists($page_id) {
+
+		$sql = "SELECT page_id FROM structure WHERE page_id = ".intval($page_id);
+
+		$result = $this->db->querySingle($sql);
+
+		if ($result === null) {
+			return false;
+		} else {
+			return true;
+		}
+
+
+	}
+
+
+	/**
+	 * Check if a page is published
+	 * @param int $page_id
+	 * @param bool $stict - default: false, true: returns true/false if pages exist, else returns null
+	 * @return bool|null
+	 */
+	public function page_is_published($page_id, $stict = false) {
+
+		$sql = "SELECT published FROM structure WHERE page_id = ".intval($page_id);
+
+		$result = $this->db->querySingle($sql);
+
+		if ($result === null) {
+			if ($stict) {
+				return null;
+			} else {
+				return false;
+			}
+
+		} else {
+			return ($result == 1 ? true:false);
+		}
+
+
+	}
+
+
 
 
 	/**
@@ -294,7 +344,7 @@ class Read_structure {
 
 		}
 
-		file_put_contents( $this->path . 'content/'.$page_id.'.json', json_encode($json, JSON_FORCE_OBJECT));
+		file_put_contents( $this->path . 'chmp/content/'.$page_id.'.json', json_encode($json, JSON_FORCE_OBJECT));
 
 
 	}
@@ -345,6 +395,16 @@ class Read_structure {
 				$sql .= ", hidden = " . ( $structure[ $id ] == 'true' ? 1 : 0 );
 
 				// URL
+				// TODO: validate url
+				if (trim($structure[ $id ][ 'url' ]) != '') {
+					$sql .= ", url = '".SQLite3::escapeString($structure[ $id ][ 'url' ])."'";
+				} else {
+					$sql .= ", url = '".SQLite3::escapeString(Tools::urlformat($name))."'";
+				}
+
+
+				// Structure
+				$sql .= ", template = '".SQLite3::escapeString($structure[ $id ][ 'template' ])."'";
 
 				// Where
 
@@ -360,6 +420,39 @@ class Read_structure {
 
 					$this->create_new_page($id, $father, $lang, $structure[ $id ][ 'template' ], $name, $name, $structure[ $id ][ 'copy_of' ]);
 					$output[ 'new' ]++;
+
+				} else { // update json files fo match info
+
+					$update_json = array();
+
+					// TODO: test if something actually changed before writing to files
+					if (is_file($this->path.'chmp/content/' . $id . '_edit.json')) {
+						$update_json[] = $id.'.json';
+					}
+
+					if (is_file($this->path.'chmp/content/' . $id . '_edit.json')) {
+						$update_json[] = $id . '_edit.json';
+					}
+
+					foreach ($update_json as $update_json_row) {
+						$changed = false;
+						$in_file = json_decode(file_get_contents($this->path.'chmp/content/' .$update_json_row), true);
+
+						if ($in_file['info']['name'] != $name) {
+							$in_file['info']['name'] = $name;
+							$changed = true;
+						}
+						if ($in_file['info']['templatefile'] != $structure[ $id ][ 'template' ]) {
+							$in_file['info']['templatefile'] =  $structure[ $id ][ 'template' ];
+							$changed = true;
+						}
+
+						if ($changed) {
+							file_put_contents($this->path.'chmp/content/' .$update_json_row, json_encode($in_file, JSON_FORCE_OBJECT));
+						}
+
+					}
+
 
 				}
 
@@ -457,7 +550,7 @@ class Read_structure {
 	 * @param int $add_number
 	 * @param $exclude
 	 * @return string
-	 */
+
 	public function check_url($input, $add_number = 0, $exclude = 0) {
 
 		if ( $add_number > 0 ) {
@@ -479,6 +572,7 @@ class Read_structure {
 		}
 
 	}
+	 */
 
 	/**
 	 * Get suggested url for page (recursive)
@@ -618,7 +712,8 @@ class Read_structure {
 				'page_id'   => $result_row[ 'page_id' ],
 				'father'    => $result_row[ 'father' ],
 				'name'      => $result_row[ 'name' ],
-				'published' => $result_row[ 'published' ]
+				'published' => $result_row[ 'published' ],
+				'url' => $result_row[ 'url' ]
 			);
 
 			if ( $result_row[ 'published' ] ) {
@@ -646,6 +741,53 @@ class Read_structure {
 
 		$this->structure_array      = buildTree($rows);
 		$this->structure_array_flat = $flat;
+
+	}
+
+
+	/**
+	 * Check if wanted url is available, returns a valid unique url
+	 * @param string $url
+	 * @param int|null $lang
+	 * @param array $existing_urls - existing urls from other source, ex from javascript
+	 * @return string
+	 */
+	public function check_url($url, $lang = NULL, $existing_urls = array()) {
+		if (is_null($lang)) {
+			$lang = $this->lang;
+		}
+
+		$url = Tools::urlformat($url, false);
+
+		$sql = "SELECT url FROM structure WHERE url LIKE '".SQLite3::escapeString($url)."%' AND lang = ".intval($lang);
+
+		$results = $this->db->query($sql);
+
+		$used_urls = array();
+
+		while ($row = $results->fetchArray()) {
+			$used_urls[] = $row['url'];
+		}
+
+		$used_urls = array_merge($used_urls, $existing_urls);
+
+		$test = 1;
+
+
+		if (in_array($url, $used_urls)) { // check exact match
+			$add_number = 2;
+
+			while (in_array($url.'_'.$add_number, $used_urls)) { // adding number in the end
+				$add_number++;
+			}
+
+			return $url.'_'.$add_number;
+
+		} else {
+			return $url;
+		}
+
+
 
 	}
 

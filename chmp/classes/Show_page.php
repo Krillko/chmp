@@ -255,15 +255,17 @@ class Show_page {
 
 			if ( count($all_modules) > 0 ) {
 
-				$out .= '<form>
-							<select id="chmp-add-new-module-' . $content_uid . '">';
+				$out .= '<form><div class="chmp chmp-add-module">
+
+							<select id="chmp-add-new-module-' . $content_uid . '" class="chmp chmp-add-module-select">
+								<option value="">Add module:</option>';
 				foreach ( $all_modules as $amKey => $amValue ) {
 					$out .= '<option value="' . $amKey . '">' . $amValue . '</option>';
 				}
 
 				$out .= '</select>
-							<input type="button" value="Add module" class="chmp-add-module-to" data-chmp-add-module-to="' . $content_uid . '">
-						</form>';
+							<input type="button" value="+" class="chmp chmp-add-module-ok chmp-add-module-to" data-chmp-add-module-to="' . $content_uid . '">
+						</div></form>';
 
 
 			}

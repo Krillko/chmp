@@ -73,7 +73,7 @@ $out .= '<!DOCTYPE html>
 		'.($error ? '<div class="loginerror"><p>Username or Password was wrong</p></div>':'').'
 
 		<div class="admin_headline">
-			<form method="post" target="index.php">
+			<form method="post" action="chmp/index.php">
 				<table class="login_holder">
 
 					<tr>

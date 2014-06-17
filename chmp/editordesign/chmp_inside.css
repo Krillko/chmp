@@ -452,6 +452,17 @@ body {
 	font-weight: normal;
 }
 
+.chmp-struct-active {
+	background-color: #9dd5a6 !important;
+}
+.chmp-struct-active .chmp-struct-text {
+	color: #fff;
+	font-weight: bold;
+}
+.chmp-struct-active .chmp-struct-goto a {
+	color: #fff;
+}
+
 /* chmp form */
 .form_table {
 	display: table;
