@@ -21,9 +21,14 @@ chmp/js/production.min.js
 chmp/js/editor.min.js
 chmp/editordesign/chmp.min.css
 
-# just some folders I use for testing
+# assets for the templates should not be included in git
 css
 test
 pic
+pics
+js
 jstest
+scripts
 
+# This is required for the plugin
+chmp/plugins/swift/*

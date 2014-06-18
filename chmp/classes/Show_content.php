@@ -135,28 +135,129 @@ class Show_content {
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - plugins
 
+
 		foreach ( $module_elements_plugin as $module_elements_row) {
 
 			foreach ( $module->find('*[data-chmp-plugin=' . $module_elements_row[ 'data-chmp-plugin' ] . ']') as $thisTag ) {
+
 
 				if (is_file('chmp/plugins/chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ].'.php')) {
 					$chmp_plugin_vars = $module_elements_row;
 					$chmp_plugin_content = $thisTag->innertext;
 
-					include('chmp/plugins/chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ].'.php');
 
-					if ($module_elements_row[ 'data-chmp-plugin-type' ] == 'simple') {
-						$thisTag->outertext = $chmp_output_plugin;
-					} else {
+
+					if ($this->edit and $module_elements_row[ 'data-chmp-plugin-settings' ] != '') {
+
 						$plugin_uid = uniqid('plugin');
-						$showplugin[$plugin_uid] = new $module_elements_row[ 'data-chmp-plugin' ]($chmp_plugin_vars , $chmp_plugin_content);
 
-						$thisTag->outertext = $showplugin[$plugin_uid]->show_plugin();
+						$plugin_settings = json_decode($module_elements_row[ 'data-chmp-plugin-settings' ], true);
+
+						$out = '<div class="'.($module_elements_row['data-chmp-plugin-settings-class'] != '' ? $module_elements_row['data-chmp-plugin-settings-class']:'chmp chmp-plugin-settings').'">
+						<form class="chmp-plugin-settings-form"
+								id="'.$plugin_uid.'"
+								data-chmp-plugin = "'.$module_elements_row[ 'data-chmp-plugin' ].'"
+								>';
+
+						foreach ($plugin_settings as $ps_key => $ps_value) {
+
+							$plugin_standard = ' id="'.$ps_key.'" name="'.$ps_key.'" class="chmp-plugin-setting" data-chmp-plugin-uid="'.$plugin_uid.'"'
+								.($ps_value['required'] ? ' required':'')
+								.($ps_value['placeholder'] != '' ? ' placeholder="'.$ps_value['placeholder'].'"':'')
+								.($ps_value['style'] != '' ? 'style="'.$ps_value['style'].'"':'');
+
+							$out .= '<div class="chmp-plugin-settings-row"><p>'.$ps_value['title'].'</p>';
+
+
+
+								switch($ps_value['type']) {
+
+									case 'text':
+									$out .= '<input type="text" '.$plugin_standard
+											.($ps_value['size'] != '' ? ' size="'.$ps_value['size'].'"':'')
+											.'>';
+
+									break;
+
+									case 'number':
+									$out .= '<input type="number" '.$plugin_standard
+										.(is_numeric($ps_value['step']) ? ' step="'.$ps_value['step'].'"':'')
+										.'>';
+
+									break;
+
+									case 'checkbox':
+									$out .= '<input type="checkbox" '.$plugin_standard
+											.'value="'.($ps_value['value'] != 1 ? $ps_value['value']:'1').'"'
+											.'>';
+									break;
+
+
+									case 'textarea':
+									$out .= '<textarea id="'.$ps_key.'" '.$plugin_standard
+											.'rows="'.($ps_value['rows'] != 4 ? $ps_value['rows']:'4').'"'
+											.'>';
+
+									$out .= '</textarea>';
+
+									break;
+
+									case 'select':
+										$out .= '<select id="'.$ps_key.'" '.$plugin_standard.'>';
+
+										if (is_array($ps_value['options'])) {
+											foreach ($ps_value['options'] as $psv_value) {
+												$out .= '<option value="'.$psv_value[0].'">'.$psv_value[1].'</option>';
+
+											}
+
+										}
+
+										$out .= '</select>';
+
+										break;
+
+								}
+
+
+
+
+
+
+							$out .= '</div>';
+
+						}
+
+
+						$out .= '</form></form></div>';
+
+
+						$thisTag->outertext = $out;
+
+					} else {
+
+						$test = 1;
+
+						if ($module_elements_row[ 'data-chmp-plugin-apikeys' ] == 'true') {
+							require_once ('chmp/apikeys.php');
+						}
+
+
+						include('chmp/plugins/chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ].'.php');
+
+
+						if ($module_elements_row[ 'data-chmp-plugin-type' ] == 'simple') {
+							$thisTag->outertext = $chmp_output_plugin;
+						} else {
+							$plugin_uid = uniqid('plugin');
+							$showplugin[$plugin_uid] = new $module_elements_row[ 'data-chmp-plugin' ]($chmp_plugin_vars , $chmp_plugin_content);
+
+							$thisTag->outertext = $showplugin[$plugin_uid]->show_plugin();
+
+						}
 
 					}
 
-
-					$test = 1;
 
 				}
 

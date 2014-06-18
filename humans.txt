@@ -72,3 +72,10 @@ Ajax load icon from http://ajaxload.info
 
 Flag icons in admin by Jonathan Allen
 http://365icon.com/icon-styles/ethnic/classic2/
+
+/* - - - - - - - - - - - - - Used open source
+	in plugins.
+	These are not necessary for Chmp core functionality but are used with different plugins
+*/
+Swift mailer
+http://swiftmailer.org

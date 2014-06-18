@@ -923,3 +923,33 @@ html.chmp-waiting * { cursor: wait !important; }
 	font-size: 20px;
 }
 
+
+/* plugin admin */
+
+.chmp-plugin-settings {
+	border: 1px dashed #008800;
+	padding: 10px;
+
+}
+
+.chmp-plugin-settings p {
+	font-size: 12px;
+	margin: 0 0 4px 0;
+}
+
+.chmp-plugin-settings input, .chmp-plugin-settings select, .chmp-plugin-settings textarea {
+	margin: 0 0 10px 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.chmp-plugin-settings input[type="text"], .chmp-plugin-settings select, .chmp-plugin-settings textarea {
+	width: 100%;
+
+}
+
+
+.chmp-plugin-settings input[type="number"] {
+	width: 50px;
+}
+

@@ -408,10 +408,11 @@ var chmp_zen_editor = (function () {
 
 }
 
+/**
+ * Turns cursor into wait icon
+ */
 chmp.wait_icon = function () {
-
 	$('html').addClass('chmp-waiting');
-
 };
 
 
@@ -488,6 +489,9 @@ chmp.autosave = function (publish, logout) {
  * @param {boolean} [logout=false]
  */
 chmp.read_dom = function (send_save, publish, logout) {
+
+	var plugin_all_vars, plugin_name, plugin_var, plugin_val;
+
 	logout = logout || false;
 	publish = publish || false;
 	send_save = send_save || false;
@@ -532,54 +536,21 @@ chmp.read_dom = function (send_save, publish, logout) {
 
 			// - - - - - - - - - - - - - - -  finds the modules
 			$(this).find(".chmp-edit-module").each(function () {
-
-				//console.log($(this));
-
 				module_attr = $(this).attr();
-
-				/*
-				 // finds attributes
-				 $(this).each(function() {
-				 $.each(this.attributes, function() {
-				 if(this.specified) {
-				 if (typeof this.name !== 'undefined' && typeof this.value !== 'undefined') {
-				 //console.log(this);
-				 //console.log(this.name);
-				 module_attr[this.name] =  this.value;
-				 } else {
-				 console.warn("felet:");
-				 console.log(this);
-
-				 }
-				 }
-				 });
-				 });
-				 */
-
 				module_uid = module_attr['data-chmp-uid'];
-
 				json.content[contentarea_uid].modules = json.content[contentarea_uid].modules || {};
-
 				json.content[contentarea_uid].modules[module_array_id] = {
 					'uid': module_uid
 				};
 
 				//  - - - - - - - - - - - - - - - finds the texts and images
-
-				//console.log($(this));
-
 				$(this).find("*[data-chmp-name]").each(function () {
-
-
 					element_attr = $(this).attr();
 
-
-					if ( this.tagName == 'IMG' ) {
-
+					if ( this.tagName == 'IMG' ) { // images
 						json.content[contentarea_uid].modules[module_array_id].img = json.content[contentarea_uid].modules[module_array_id].img || {};
 						json.content[contentarea_uid].modules[module_array_id].img[element_attr['data-chmp-name']] = {};
 						json.content[contentarea_uid].modules[module_array_id].img[element_attr['data-chmp-name']].src = chmp.get_filename(element_attr.src);
-
 
 						json.content[contentarea_uid].modules[module_array_id].img[element_attr['data-chmp-name']].orgImgId = element_attr['data-chmp-orgimgid'];
 						json.content[contentarea_uid].modules[module_array_id].img[element_attr['data-chmp-name']].name = element_attr['data-chmp-name'];
@@ -587,14 +558,49 @@ chmp.read_dom = function (send_save, publish, logout) {
 						json.content[contentarea_uid].modules[module_array_id].img[element_attr['data-chmp-name']].height = element_attr.height;
 						json.content[contentarea_uid].modules[module_array_id].img[element_attr['data-chmp-name']].alt = element_attr.alt;
 
-
 					} else if ( chmp.chmp_cnf_texts.indexOf(this.tagName.toLowerCase()) > -1 ) { // reads texts
 						json.content[contentarea_uid].modules[module_array_id].text = json.content[contentarea_uid].modules[module_array_id].text || {};
 						json.content[contentarea_uid].modules[module_array_id].text[element_attr['data-chmp-name']] = chmp.remove_empty_chr($(this).html());
 					}
+				});
+
+				// - - - - - - - - - - - - - - - reads plugins
+				$(this).find(".chmp-plugin-settings-form").each(function () {
+
+					plugin_all_vars = {};
+					plugin_name = $(this).attr('data-chmp-plugin');
+					json.content[contentarea_uid].modules[module_array_id].plugin = json.content[contentarea_uid].modules[module_array_id].plugin || {};
+					json.content[contentarea_uid].modules[module_array_id].plugin[plugin_name] = {};
+
+
+					$(this).find(".chmp-plugin-setting").each(function() {
+
+						plugin_var = $(this).attr('name');
+
+						if (this.type == 'checkbox') {
+
+							if ($( this ).prop( "checked" ) ) {
+								plugin_val = true;
+
+							} else {
+								plugin_val = false;
+
+							}
+
+						} else {
+							plugin_val = $(this).val();
+						}
+
+
+						json.content[contentarea_uid].modules[module_array_id].plugin[plugin_name][plugin_var] = plugin_val;
+
+						//console.log(plugin_var + ' : ' + plugin_val);
+
+					});
 
 
 				});
+
 				module_array_id++;
 			});
 
@@ -613,6 +619,10 @@ chmp.read_dom = function (send_save, publish, logout) {
 				json.content.ext.text[element_attr['data-chmp-name']] = chmp.remove_empty_chr($(this).html());
 			}
 		});
+
+
+
+
 
 		//console.log(json);
 
@@ -659,6 +669,7 @@ chmp.read_dom = function (send_save, publish, logout) {
 		} else {
 			// do something else here
 			// TODO: this option is for future functions where we want to read the DOM without saving
+			// for now, its only for debuggin
 			console.log(json);
 			chmp.is_saving = false;
 			chmp.is_on_timer = false;
@@ -1047,6 +1058,16 @@ if (chmp.edit) {
 		});
 
 
+	});
+
+	// prevent plugin forms from reloading the page
+	$(document).on('submit', '.chmp-plugin-settings-form', function(e) {
+		e.preventDefault();
+	});
+
+	// save plugin data
+	$(document).on('keyup blur change', '.chmp-plugin-setting', function() {
+		chmp.autosave_start(false, false);
 	});
 
 
