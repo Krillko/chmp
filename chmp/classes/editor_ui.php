@@ -84,10 +84,11 @@ class Editor_ui {
 				</div>
 			</div>
 
-
+			<!--
 			<div class="chmp chmp-nav-part chmp-nav-part-btn">
 				<div class="chmp chmp-input-dynamic chmp-button"><p>Change image</p></div>
 			</div>
+			-->
 
 
 			<div class="chmp chmp-nav-part chmp-nav-part-btn">
