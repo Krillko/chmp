@@ -1,0 +1,48 @@
+
+
+
+<!-- Hello world 3. An object oriented plugin with settings -->
+
+<module data-chmp-uid="107" data-chmp-name="Hello world 3">
+	<div data-chmp-name="body">Lorem ipsum</div>
+	<div>
+		<plugin
+				data-chmp-plugin="hello_world3"
+				data-chmp-plugin-type="object"
+				data-chmp-plugin-apikeys="false"
+				data-chmp-plugin-settings='{"text":{"title":"Test 1 text","type":"text","required":true,"placeholder":"Placeholder text"},"textarea":{"title":"Test 2 textarea","type":"textarea","rows":6},"checkbox":{"title":"Test 3 checkbox","type":"checkbox","value":1},"number":{"title":"Test 4 number","type":"number","default":4,"step":1,"style": "width:50px;"},"select":{"title":"Test 5 select","type":"select","options":{"0":{"0":"value1","1":"Label 1"},"1":{"0":"value2","1":"Label 2"},"2":{"0":"value3","1":"Label 3"}}}}'
+				>
+
+		</plugin>
+	</div>
+</module>
+
+
+<!-- Simple plugin for sending mail -->
+
+<module data-chmp-uid="106" data-chmp-name="Mailform">
+	<div data-chmp-name="body">Lorem ipsum</div>
+	<div>
+		<plugin
+				data-chmp-plugin="simple_mailer"
+				data-chmp-plugin-type="simple"
+				data-chmp-plugin-apikeys="true"
+				data-chmp-subject="Här kommer ett mail"
+				data-chmp-to = "kristoffer.ekendahl@diakrit.com"
+				data-chmp-sender-name = 'Diakrit Order'
+				data-chmp-sent-message="Tack för ditt svar"
+				data-chmp-sent-class="chmp_msg_sent">
+
+			<form method="POST">
+
+				<input type="text" name="chmp_simple_mailer[fieldname1]">
+
+				<input type="hidden" name="chmp_simple_mailer_send" value="1">
+			</form>
+
+
+
+
+		</plugin>
+	</div>
+</module>

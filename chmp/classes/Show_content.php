@@ -79,10 +79,10 @@ class Show_content {
 
 		}
 
-		$module_design        = $this->template->get_module_design($contentarea_uid, $uid);
-		$module_attr          = $this->template->get_module_elements($contentarea_uid, $uid, 'attr');
-		$module_elements_text = $this->template->get_module_elements($contentarea_uid, $uid, 'text');
-		$module_elements_img  = $this->template->get_module_elements($contentarea_uid, $uid, 'img');
+		$module_design          = $this->template->get_module_design($contentarea_uid, $uid);
+		$module_attr            = $this->template->get_module_elements($contentarea_uid, $uid, 'attr');
+		$module_elements_text   = $this->template->get_module_elements($contentarea_uid, $uid, 'text');
+		$module_elements_img    = $this->template->get_module_elements($contentarea_uid, $uid, 'img');
 		$module_elements_plugin = $this->template->get_module_elements($contentarea_uid, $uid, 'plugin');
 
 		$module = new simple_html_dom();
@@ -123,6 +123,7 @@ class Show_content {
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - images
 		foreach ( $module_elements_img as $module_elements_row ) {
+
 			foreach ( $module->find('*[data-chmp-name*=' . $module_elements_row[ 'data-chmp-name' ] . ']') as $thisTag ) {
 				// checking so that the template doesnt have texts and images named the same
 				if ( Config::tag_kind($thisTag->tag) == 'img' ) {
@@ -135,102 +136,109 @@ class Show_content {
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - plugins
 
-
-		foreach ( $module_elements_plugin as $module_elements_row) {
-
+		foreach ( $module_elements_plugin as $module_elements_row ) {
+			$test = 1;
 			foreach ( $module->find('*[data-chmp-plugin=' . $module_elements_row[ 'data-chmp-plugin' ] . ']') as $thisTag ) {
-
-
-				if (is_file('chmp/plugins/chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ].'.php')) {
-					$chmp_plugin_vars = $module_elements_row;
+				$test = 1;
+				if ( is_file('chmp/plugins/chmp_plugin_' . $module_elements_row[ 'data-chmp-plugin' ] . '.php') ) {
+					$chmp_plugin_vars    = $module_elements_row;
 					$chmp_plugin_content = $thisTag->innertext;
+					if (is_array($element[ 'plugin' ][ $module_elements_row[ 'data-chmp-plugin' ] ])) {
+						$chmp_plugin_settings = $element[ 'plugin' ][ $module_elements_row[ 'data-chmp-plugin' ] ];
+					} else {
+						$chmp_plugin_settings = array();
+					}
+					$plugin_uid = uniqid('plugin');
+
+					if ( $this->edit and $module_elements_row[ 'data-chmp-plugin-settings' ] != '' ) {
 
 
 
-					if ($this->edit and $module_elements_row[ 'data-chmp-plugin-settings' ] != '') {
+						$plugin_settings = json_decode($module_elements_row[ 'data-chmp-plugin-settings' ], TRUE);
 
-						$plugin_uid = uniqid('plugin');
-
-						$plugin_settings = json_decode($module_elements_row[ 'data-chmp-plugin-settings' ], true);
-
-						$out = '<div class="'.($module_elements_row['data-chmp-plugin-settings-class'] != '' ? $module_elements_row['data-chmp-plugin-settings-class']:'chmp chmp-plugin-settings').'">
+						$out = '<div class="' . ( $module_elements_row[ 'data-chmp-plugin-settings-class' ] != '' ? $module_elements_row[ 'data-chmp-plugin-settings-class' ] : 'chmp chmp-plugin-settings' ) . '">
 						<form class="chmp-plugin-settings-form"
-								id="'.$plugin_uid.'"
-								data-chmp-plugin = "'.$module_elements_row[ 'data-chmp-plugin' ].'"
+								id="' . $plugin_uid . '"
+								data-chmp-plugin = "' . $module_elements_row[ 'data-chmp-plugin' ] . '"
 								>';
 
-						foreach ($plugin_settings as $ps_key => $ps_value) {
+						foreach ( $plugin_settings as $ps_key => $ps_value ) {
 
-							$plugin_standard = ' id="'.$ps_key.'" name="'.$ps_key.'" class="chmp-plugin-setting" data-chmp-plugin-uid="'.$plugin_uid.'"'
-								.($ps_value['required'] ? ' required':'')
-								.($ps_value['placeholder'] != '' ? ' placeholder="'.$ps_value['placeholder'].'"':'')
-								.($ps_value['style'] != '' ? 'style="'.$ps_value['style'].'"':'');
+							$plugin_standard = ' id="' . $ps_key . '" name="' . $ps_key . '" class="chmp-plugin-setting" data-chmp-plugin-uid="' . $plugin_uid . '"'
+								. ( $ps_value[ 'required' ] ? ' required' : '' )
+								. ( $ps_value[ 'placeholder' ] != '' ? ' placeholder="' . $ps_value[ 'placeholder' ] . '"' : '' )
+								. ( $ps_value[ 'style' ] != '' ? 'style="' . $ps_value[ 'style' ] . '"' : '' );
 
-							$out .= '<div class="chmp-plugin-settings-row"><p>'.$ps_value['title'].'</p>';
+							$out .= '<div class="chmp-plugin-settings-row"><p>' . $ps_value[ 'title' ] . '</p>';
 
+							$value_in = '';
 
+							// loads value from user or default value
+							if ( $chmp_plugin_settings[ $ps_key ] != '' ) {
+								$value_in = $chmp_plugin_settings[ $ps_key ];
+							} else if ($ps_value[ 'default' ] != '') {
+								$value_in = $ps_value[ 'default' ];
 
-								switch($ps_value['type']) {
+							}
 
-									case 'text':
-									$out .= '<input type="text" '.$plugin_standard
-											.($ps_value['size'] != '' ? ' size="'.$ps_value['size'].'"':'')
-											.'>';
+							switch ($ps_value[ 'type' ]) {
 
-									break;
-
-									case 'number':
-									$out .= '<input type="number" '.$plugin_standard
-										.(is_numeric($ps_value['step']) ? ' step="'.$ps_value['step'].'"':'')
-										.'>';
-
-									break;
-
-									case 'checkbox':
-									$out .= '<input type="checkbox" '.$plugin_standard
-											.'value="'.($ps_value['value'] != 1 ? $ps_value['value']:'1').'"'
-											.'>';
-									break;
-
-
-									case 'textarea':
-									$out .= '<textarea id="'.$ps_key.'" '.$plugin_standard
-											.'rows="'.($ps_value['rows'] != 4 ? $ps_value['rows']:'4').'"'
-											.'>';
-
-									$out .= '</textarea>';
+								case 'text':
+									$out .= '<input type="text" ' . $plugin_standard
+										. ( $ps_value[ 'size' ] != '' ? ' size="' . $ps_value[ 'size' ] . '"' : '' )
+										. ( $value_in != '' ? ' value="'.$value_in.'"':'')
+										. '>';
 
 									break;
 
-									case 'select':
-										$out .= '<select id="'.$ps_key.'" '.$plugin_standard.'>';
+								case 'number':
+									$out .= '<input type="number" ' . $plugin_standard
+										. ( is_numeric($ps_value[ 'step' ]) ? ' step="' . $ps_value[ 'step' ] . '"' : '' )
+										. ( $value_in != '' ? ' value="'.$value_in.'"':'')
+										. '>';
 
-										if (is_array($ps_value['options'])) {
-											foreach ($ps_value['options'] as $psv_value) {
-												$out .= '<option value="'.$psv_value[0].'">'.$psv_value[1].'</option>';
+									break;
 
-											}
+								case 'checkbox':
+									$out .= '<input type="checkbox" ' . $plugin_standard
+										. ' value="' . ( $ps_value[ 'value' ] != 1 ? $ps_value[ 'value' ] : '1' ) . '"'
+										. ($value_in == '1' ? ' checked':'')
+										. '>';
+									break;
+
+								case 'textarea':
+									$out .= '<textarea id="' . $ps_key . '" ' . $plugin_standard
+										. 'rows="' . ( $ps_value[ 'rows' ] != 4 ? $ps_value[ 'rows' ] : '4' ) . '"'
+										. '>';
+
+
+
+									$out .= ($value_in != '' ? $value_in:'').'</textarea>';
+
+									break;
+
+								case 'select':
+									$out .= '<select id="' . $ps_key . '" ' . $plugin_standard . '>';
+
+									if ( is_array($ps_value[ 'options' ]) ) {
+										foreach ( $ps_value[ 'options' ] as $psv_value ) {
+											$out .= '<option value="' . $psv_value[ 0 ] . '" '.($value_in == $psv_value[ 0 ] ? ' selected':'' ).'>' . $psv_value[ 1 ] . '</option>';
 
 										}
 
-										$out .= '</select>';
+									}
 
-										break;
+									$out .= '</select>';
 
-								}
+									break;
 
-
-
-
-
+							}
 
 							$out .= '</div>';
 
 						}
 
-
 						$out .= '</form></form></div>';
-
 
 						$thisTag->outertext = $out;
 
@@ -238,21 +246,20 @@ class Show_content {
 
 						$test = 1;
 
-						if ($module_elements_row[ 'data-chmp-plugin-apikeys' ] == 'true') {
-							require_once ('chmp/apikeys.php');
+						if ( $module_elements_row[ 'data-chmp-plugin-apikeys' ] == 'true' ) {
+							require_once( 'chmp/apikeys.php' );
 						}
 
+						require_once( 'chmp/plugins/chmp_plugin_' . $module_elements_row[ 'data-chmp-plugin' ] . '.php' );
 
-						include('chmp/plugins/chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ].'.php');
-
-
-						if ($module_elements_row[ 'data-chmp-plugin-type' ] == 'simple') {
+						if ( $module_elements_row[ 'data-chmp-plugin-type' ] == 'simple' ) {
 							$thisTag->outertext = $chmp_output_plugin;
 						} else {
-							$plugin_uid = uniqid('plugin');
-							$showplugin[$plugin_uid] = new $module_elements_row[ 'data-chmp-plugin' ]($chmp_plugin_vars , $chmp_plugin_content);
+							$classname = 'chmp_plugin_'.$module_elements_row[ 'data-chmp-plugin' ];
 
-							$thisTag->outertext = $showplugin[$plugin_uid]->show_plugin();
+							$showplugin[ $plugin_uid ] = new $classname( $chmp_plugin_vars, $chmp_plugin_content, $chmp_plugin_settings );
+
+							$thisTag->outertext = $showplugin[ $plugin_uid ]->show_plugin();
 
 						}
 
@@ -264,9 +271,7 @@ class Show_content {
 			}
 
 
-
 		}
-
 
 		if ( $this->edit ) {
 			$module_attr = $this->template->get_module_elements($contentarea_uid, $uid, 'attr');

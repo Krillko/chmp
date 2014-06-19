@@ -5,7 +5,7 @@
  *
  * Object-oriented plugin
  */
-class hello_world2 {
+class chmp_plugin_hello_world2 {
 	private $chmp_plugin_vars,$chmp_plugin_content;
 
 	/**

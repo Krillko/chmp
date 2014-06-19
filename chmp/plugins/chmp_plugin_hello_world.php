@@ -12,6 +12,7 @@
  * Inputs:
  * @global array $chmp_plugin_vars - html attributes ex; "data-chmp-plugin"
  * @global string|null $chmp_plugin_content - content of <plugin> tag
+ * @global array $chmp_plugin_settings - settings made by the user
  *
  * Output
  * Make a variable $chmp_output_plugin, this will replace entire <plugin> tag
